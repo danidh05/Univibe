@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\PostRequest;
 
@@ -40,7 +41,9 @@ class PostController extends Controller
     public function show_user_post($id)
     {
         try {
-            $post = Post::find($id);
+            $user = User::find($id);
+            $post = Post::where('user_id' , $user->id)
+                         ->orderBy('created_at', 'desc')->get();
 
             return response()->json($post, 200);
 
