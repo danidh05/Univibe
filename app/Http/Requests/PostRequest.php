@@ -24,7 +24,7 @@ class PostRequest extends FormRequest
         return [
             'user_id' => 'required|exists:users,id',
             'content' => 'required|string',
-            'mediaurl' => 'nullable|string',
+            'media_url' => 'nullable|string',
             'postType' => 'required|string',
         ];
     }

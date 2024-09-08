@@ -6,6 +6,8 @@ use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\PostRequest;
+use Illuminate\Http\Response;
+
 
 class PostController extends Controller
 {
@@ -28,7 +30,7 @@ class PostController extends Controller
         try {
             $post = Post::create($request->validated());
 
-            return response()->json($post, 200);
+            return response()->json($post,  Response::HTTP_CREATED);
 
         } catch (\Exception $e) {
 
@@ -61,7 +63,7 @@ class PostController extends Controller
 
             $post->update($request->validated());
 
-            return response()->json($post, 200);
+            return response()->json($post, Response::HTTP_CREATED);
 
         } catch (\Exception $e) {
 
@@ -77,7 +79,7 @@ class PostController extends Controller
 
             $post->delete();
 
-            return response()->json('Post deleted successfully', 200);
+            return response()->json('Post deleted successfully',  Response::HTTP_NO_CONTENT);
 
         } catch (\Exception $e) {
             // Log::error('Error deleting post: '.$e->getMessage());
