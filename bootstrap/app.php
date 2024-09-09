@@ -11,10 +11,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->validateCsrfTokens(except: [
-            'api/add_post',
-            'api/*',
-        ]);
+        // $middleware->validateCsrfTokens(except: [
+        //     'api/add_post',
+        //     'api/*',
+        // ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
