@@ -20,7 +20,7 @@ class PostFactory extends Factory
             'content' => $this->faker->paragraph,
             'user_id' => \App\Models\User::factory(),
             'media_url' => $this->faker->url,
-            'postType' => $this->faker->word,
+            'postType' => 'image',
         ];
     }
 }
