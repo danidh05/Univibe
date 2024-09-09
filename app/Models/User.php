@@ -17,9 +17,14 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'username',
         'email',
         'password',
+        'profile_picture',
+        'bio',
+        'role_id',
+        'is_active',
+        'is_verified',
     ];
 
     /**
@@ -43,5 +48,35 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function messagesSent()
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+    
+    public function messagesReceived()
+    {
+        return $this->hasMany(Message::class, 'receiver_id');
+    }
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
+    }
+
+    public function ownedGroups()
+    {
+        return $this->hasMany(GroupChat::class, 'owner_id');
+    }
+
+    public function groups()
+    {
+        return $this->belongsToMany(GroupChat::class, 'group_members');
     }
 }
