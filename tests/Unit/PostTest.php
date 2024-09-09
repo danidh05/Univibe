@@ -13,10 +13,7 @@ class PostTest extends TestCase
     /**
      * A basic unit test example.
      */
-    public function test_example(): void
-    {
-        $this->assertTrue(true);
-    }
+
 
     protected $user;
     protected $post;
@@ -29,7 +26,7 @@ class PostTest extends TestCase
         $this->post = Post::factory()->create(['user_id' => $this->user->id]);
     }
 
-    /** show post */
+    /** @test */
     public function it_can_return_all_posts()
     {
         $response = $this->actingAs($this->user)->getJson('/api/show_posts');
@@ -41,7 +38,7 @@ class PostTest extends TestCase
     }
 
 
-    /** add post */
+    /** @test */
     public function it_can_create_a_post()
     {
         $postData = [
@@ -57,7 +54,7 @@ class PostTest extends TestCase
                  ->assertJson($postData);
     }
 
-    /** update post */
+    /** @test */
     public function it_can_update_a_post()
     {
         $updatedData = [
@@ -73,7 +70,7 @@ class PostTest extends TestCase
                  ->assertJson($updatedData);
     }
 
-    /** delete post */
+    /** @test */
     public function it_can_delete_a_post()
     {
         $response = $this->actingAs($this->user)->deleteJson('/api/delete_post/'.$this->post->id);
@@ -81,7 +78,7 @@ class PostTest extends TestCase
         $response->assertStatus(Response::HTTP_NO_CONTENT);
     }
 
-    /** show post by user */
+    /** @test */
     public function it_can_show_posts_by_user()
     {
         $response = $this->actingAs($this->user)->getJson('/api/show_user_post/'.$this->user->id);

@@ -4,16 +4,14 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 use App\Models\Post;
-use App\Http\Controllers\PostController;
+use App\Models\User;
+use App\Models\Comment;
+use Illuminate\Http\Response;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class PostTest extends TestCase
+class CommentControllerTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     */
- 
 
-
+  //
 }
