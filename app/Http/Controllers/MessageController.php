@@ -19,8 +19,8 @@ class MessageController extends Controller
             ]);
     
             $message = Message::create([
-                // 'sender_id' => Auth::id(),
-                'sender_id' => 1, // Testing Purposes
+                'sender_id' => Auth::id(),
+                // 'sender_id' => 1, // Testing Purposes
                 'receiver_id' => $request->input('receiver_id'),
                 'content' => $request->input('content'),
             ]);
@@ -42,7 +42,15 @@ class MessageController extends Controller
                 'message' => 'Message sent successfully.',
                 'data' => $message,
             ], 201);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Return a custom validation error response
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed.',
+                'errors' => $e->errors(),
+            ], 422);
         } catch (\Throwable $th) {
+            // Return a generic error response
             return response()->json([
                 'success' => false,
                 'message' => $th->getMessage(),
@@ -56,8 +64,8 @@ class MessageController extends Controller
                 'user_id' => 'required|exists:users,id',
             ]);
     
-            // $authUserId = Auth::id();
-            $authUserId = 2; // Testing Purposes
+            $authUserId = Auth::id();
+            // $authUserId = 2; // Testing Purposes
             $targetUserId = $request->input('user_id');
     
             $messages = Message::where(function ($query) use ($authUserId, $targetUserId) {
@@ -75,7 +83,15 @@ class MessageController extends Controller
                 'success' => true,
                 'data' => $messages,
             ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Return a custom validation error response
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed.',
+                'errors' => $e->errors(),
+            ], 422);
         } catch (\Throwable $th) {
+            // Return a generic error response
             return response()->json([
                 'success' => false,
                 'message' => $th->getMessage(),
@@ -92,8 +108,8 @@ class MessageController extends Controller
             $messageId = $request->input('message_id');
             $message = Message::findOrFail($messageId);
     
-            // $authUserId = Auth::id();
-            $authUserId = 1; // Testing Purposes
+            $authUserId = Auth::id();
+            // $authUserId = 1; // Testing Purposes
     
             // Check if the authenticated user is the sender
             if ($message->sender_id !== $authUserId) {
@@ -130,8 +146,8 @@ class MessageController extends Controller
             $content = $request->input('content');
             $message = Message::findOrFail($messageId);
     
-            // $authUserId = Auth::id();
-            $authUserId = 1; // Testing Purposes
+            $authUserId = Auth::id();
+            // $authUserId = 1; // Testing Purposes
     
             // Check if the authenticated user is the sender
             if ($message->sender_id !== $authUserId) {
@@ -150,7 +166,15 @@ class MessageController extends Controller
                 'message' => 'Message updated successfully.',
                 'data' => $message,
             ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Return a custom validation error response
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed.',
+                'errors' => $e->errors(),
+            ], 422);
         } catch (\Throwable $th) {
+            // Return a generic error response
             return response()->json([
                 'success' => false,
                 'message' => $th->getMessage(),

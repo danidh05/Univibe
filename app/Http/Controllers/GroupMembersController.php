@@ -16,8 +16,8 @@ class GroupMembersController extends Controller
             ]);
 
             // ONLY ADMIN CAN ADD
-            // $userId = Auth::id();
-            $userId = 1; // Testing Purposes
+            $userId = Auth::id();
+            // $userId = 1; // Testing Purposes
             $userToAdd = $request->input('user_id');
             $groupChat = GroupChat::find($request->input('group_chat_id'));
 
@@ -45,7 +45,15 @@ class GroupMembersController extends Controller
                 'message' => 'Member added successfully!',
             ], 201);
             
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Return a custom validation error response
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed.',
+                'errors' => $e->errors(),
+            ], 422);
         } catch (\Throwable $th) {
+            // Return a generic error response
             return response()->json([
                 'success' => false,
                 'message' => $th->getMessage(),
@@ -61,8 +69,8 @@ class GroupMembersController extends Controller
             ]);
 
             // ONLY ADMIN CAN ADD
-            // $userId = Auth::id();
-            $userId = 2; // Testing Purposes
+            $userId = Auth::id();
+            // $userId = 2; // Testing Purposes
             $userToRemove = $request->input('user_id');
             $groupChat = GroupChat::find($request->input('group_chat_id'));
 
@@ -98,7 +106,15 @@ class GroupMembersController extends Controller
                 'message' => 'Member removed successfully!',
             ], 201);
             
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Return a custom validation error response
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed.',
+                'errors' => $e->errors(),
+            ], 422);
         } catch (\Throwable $th) {
+            // Return a generic error response
             return response()->json([
                 'success' => false,
                 'message' => $th->getMessage(),
