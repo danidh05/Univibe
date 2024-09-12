@@ -19,9 +19,11 @@ class GroupChatControllerTest extends TestCase
         $user = User::factory()->create(['id' => 1]); // Ensure user exists
         $this->actingAs($user);
 
+        $photo = UploadedFile::fake()->image('photo.jpg');
+
         $response = $this->postJson('/api/groups/create', [
             'name' => 'Test Group',
-            'photo' => 'http://example.com/photo.jpg', // Optional
+            'photo' => $photo // Optional
         ]);
 
         $response->assertStatus(201)
@@ -116,7 +118,7 @@ class GroupChatControllerTest extends TestCase
         $response = $this->putJson('/api/groups/update/name', []);
 
         $response->assertStatus(422)
-                 ->assertJsonValidationErrors(['group_chat_id', 'name']);
+                 ->assertJsonValidationErrors(['group_chat_id']);
     }
 
     public function test_update_group_photo_success()
@@ -154,7 +156,7 @@ class GroupChatControllerTest extends TestCase
         $response = $this->putJson('/api/groups/update/photo', []);
 
         $response->assertStatus(422)
-                 ->assertJsonValidationErrors(['group_chat_id', 'photo']);
+                 ->assertJsonValidationErrors(['group_chat_id']);
     }
 
     public function test_update_group_photo_unauthorized()

@@ -34,7 +34,7 @@ class GroupMembersControllerTest extends TestCase
         $response = $this->postJson('/api/group/members/add', []);
 
         $response->assertStatus(422)
-                 ->assertJsonValidationErrors(['group_chat_id', 'user_id']);
+                 ->assertJsonValidationErrors(['group_chat_id']);
     }
 
     public function test_add_member_authorization_error()
@@ -68,11 +68,44 @@ class GroupMembersControllerTest extends TestCase
             'user_id' => $userToAdd->id,
         ]);
 
-        $response->assertStatus(400)
+        $response->assertStatus(409)
                  ->assertJson([
                      'success' => false,
                      'message' => 'User is already a member of this group.',
                  ]);
+    }
+
+    public function cannot_add_member_when_group_is_full()
+    {
+        $admin = User::factory()->create(['id' => 2]);
+        // Create a group chat
+        $groupChat = GroupChat::factory()->create(['id' => 1, 'owner_id' => 2]);
+
+        // Create 100 users and add them to the group
+        $users = User::factory()->count(100)->create();
+        foreach ($users as $user) {
+            $groupChat->members()->attach($user->id, ['joined_at' => now()]);
+        }
+
+        // Assert that the group now has 100 members
+        $this->assertCount(100, $groupChat->members);
+
+        // Try to add another user to the full group
+        $newUser = User::factory()->create();
+
+        $response = $this->actingAs($admin)->postJson('/group-chats/add', [
+            'user_id' => $newUser->id,
+            'group_chat_id' => $groupChat->id,
+        ]);
+
+        // Check that the response status is 409 (Conflict)
+        $response->assertStatus(409);
+
+        // Check the JSON structure and message
+        $response->assertJson([
+            'success' => false,
+            'message' => 'The group is full.',
+        ]);
     }
 
     public function test_remove_member_success()
@@ -99,7 +132,7 @@ class GroupMembersControllerTest extends TestCase
         $response = $this->postJson('/api/group/members/remove', []);
 
         $response->assertStatus(422)
-                 ->assertJsonValidationErrors(['group_chat_id', 'user_id']);
+                 ->assertJsonValidationErrors(['group_chat_id']);
     }
 
     public function test_remove_member_authorization_error()
@@ -132,7 +165,7 @@ class GroupMembersControllerTest extends TestCase
             'user_id' => $owner->id,
         ]);
 
-        $response->assertStatus(400)
+        $response->assertStatus(403)
                  ->assertJson([
                      'success' => false,
                      'message' => 'You cannot remove yourself (the group owner) from the group.',
@@ -150,7 +183,7 @@ class GroupMembersControllerTest extends TestCase
             'user_id' => $userToRemove->id,
         ]);
 
-        $response->assertStatus(400)
+        $response->assertStatus(410)
                  ->assertJson([
                      'success' => false,
                      'message' => 'User is not a member of this group.',

@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Events\PrivateMessageSent;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\Message;
@@ -56,6 +57,40 @@ class MessageControllerTest extends TestCase
 
         $response->assertStatus(422) // Validation error
                  ->assertJsonValidationErrors(['receiver_id', 'content']);
+    }
+
+    public function test_send_private_message_content_too_long()
+    {
+        // Create a user to act as the sender
+        $sender = User::factory()->create(['id' => 1]);
+        
+        // Create a user to act as the receiver
+        $receiver = User::factory()->create(['id' => 2]);
+
+        // Authenticate as the sender
+        $this->actingAs($sender);
+
+        // Create a string longer than 255 characters
+        $longContent = str_repeat('a', 256); // 256 characters
+
+        // Make the request with the long content
+        $response = $this->postJson('/api/messages/send', [
+            'receiver_id' => $receiver->id,
+            'content' => $longContent,
+        ]);
+
+        // Assert the response status is 422 Unprocessable Entity
+        $response->assertStatus(422)
+                ->assertJsonValidationErrors('content');
+
+        // Assert the error message
+        $response->assertJson([
+            'success' => false,
+            'message' => 'Validation failed.',
+            'errors' => [
+                'content' => ['The content field must not be greater than 255 characters.']
+            ],
+        ]);
     }
 
     public function test_get_private_messages()
