@@ -6,6 +6,7 @@ use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PollController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\SavePostController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -34,3 +35,8 @@ Route::post('/like_post/{postId}' , [LikeController::class , 'likePost']);
 // {{ Poll }}
 Route::post('/posts/{postId}/vote', [PollController::class, 'vote']);
 // Route::get('/posts/{postId}/poll-results', [PollController::class, 'getPollResults']);
+
+//{{ Save Post }}
+Route::post('/save_post/{postId}', [SavePostController::class, 'savePost']);
+Route::get('/get_save_post', [SavePostController::class, 'getAllSavePost']);
+Route::delete('/delete_save_post/{postId}', [SavePostController::class, 'deleteSavePost']);
