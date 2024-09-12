@@ -10,22 +10,19 @@ class GroupMembersController extends Controller
 {
     public function add(Request $request){
         try {
+
             $request->validate([
-                'group_chat_id' => 'required|exists:group_chats,id',
                 'user_id' => 'required|exists:users,id'
             ]);
 
-            // ONLY ADMIN CAN ADD
-            $userId = Auth::id();
-            // $userId = 1; // Testing Purposes
             $userToAdd = $request->input('user_id');
             $groupChat = GroupChat::find($request->input('group_chat_id'));
 
-            if($groupChat->owner_id !== $userId){
+            if(count($groupChat->members) == 100){
                 return response()->json([
                     'success' => false,
-                    'message' => 'You are not authorized to update this group.'
-                ], 403);
+                    'message' => 'The group is full.'
+                ], 409); // 409 for conflict
             }
 
             // Check if the user is already a member of the group
@@ -35,7 +32,7 @@ class GroupMembersController extends Controller
                 return response()->json([
                     'success' => false,
                     'message' => 'User is already a member of this group.'
-                ], 400);
+                ], 409); // 409 for conflict
             }
 
             $groupChat->members()->attach($userToAdd, ['joined_at' => now()]);
@@ -64,29 +61,18 @@ class GroupMembersController extends Controller
     public function remove(Request $request){
         try {
             $request->validate([
-                'group_chat_id' => 'required|exists:group_chats,id',
+                // 'group_chat_id' => 'required|exists:group_chats,id',
                 'user_id' => 'required|exists:users,id'
             ]);
 
-            // ONLY ADMIN CAN ADD
-            $userId = Auth::id();
-            // $userId = 2; // Testing Purposes
             $userToRemove = $request->input('user_id');
             $groupChat = GroupChat::find($request->input('group_chat_id'));
-
-            // either admin remove or user removing himself
-            if($groupChat->owner_id !== $userId && $userToRemove !== $userId){
-                return response()->json([
-                    'success' => false,
-                    'message' => 'You are not authorized to update this group.'
-                ], 403);
-            }
 
             if ($groupChat->owner_id == $userToRemove) {
                 return response()->json([
                     'success' => false,
                     'message' => 'You cannot remove yourself (the group owner) from the group.'
-                ], 400);
+                ], 403); // 403 because it is not authorized
             }
 
             // Check if the user is a member of the group
@@ -96,7 +82,7 @@ class GroupMembersController extends Controller
                 return response()->json([
                     'success' => false,
                     'message' => 'User is not a member of this group.'
-                ], 400);
+                ], 410); // 410 if the resource has already been deleted
             }
 
             $groupChat->members()->detach($userToRemove);
@@ -113,6 +99,25 @@ class GroupMembersController extends Controller
                 'message' => 'Validation failed.',
                 'errors' => $e->errors(),
             ], 422);
+        } catch (\Throwable $th) {
+            // Return a generic error response
+            return response()->json([
+                'success' => false,
+                'message' => $th->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function leave(Request $request){
+        try {
+            $groupChat = GroupChat::find($request->input('group_chat_id'));
+            $groupChat->members()->detach(Auth::id());
+
+            return response()->json([
+                'success' => true,
+                'message' => 'You have left successfully!',
+            ], 201);
+            
         } catch (\Throwable $th) {
             // Return a generic error response
             return response()->json([
