@@ -17,12 +17,13 @@ class MessageController extends Controller
                 'receiver_id' => 'required|exists:users,id',
                 'content' => 'required|string|max:255',
             ]);
+
+            $string = app('profanityFilter')->filter($request->input('content'));
     
             $message = Message::create([
                 'sender_id' => Auth::id(),
-                // 'sender_id' => 1, // Testing Purposes
                 'receiver_id' => $request->input('receiver_id'),
-                'content' => $request->input('content'),
+                'content' => $string,
             ]);
 
             // Prepare the data you want to broadcast
@@ -65,7 +66,6 @@ class MessageController extends Controller
             ]);
     
             $authUserId = Auth::id();
-            // $authUserId = 2; // Testing Purposes
             $targetUserId = $request->input('user_id');
     
             $messages = Message::where(function ($query) use ($authUserId, $targetUserId) {
@@ -109,7 +109,6 @@ class MessageController extends Controller
             $message = Message::findOrFail($messageId);
     
             $authUserId = Auth::id();
-            // $authUserId = 1; // Testing Purposes
     
             // Check if the authenticated user is the sender
             if ($message->sender_id !== $authUserId) {
@@ -147,7 +146,6 @@ class MessageController extends Controller
             $message = Message::findOrFail($messageId);
     
             $authUserId = Auth::id();
-            // $authUserId = 1; // Testing Purposes
     
             // Check if the authenticated user is the sender
             if ($message->sender_id !== $authUserId) {
