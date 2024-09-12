@@ -25,7 +25,9 @@ class PostRequest extends FormRequest
             'user_id' => 'required|exists:users,id',
             'content' => 'required|string',
             'media_url' => 'nullable|string',
-            'postType' => 'required|string',
+            'postType' => 'required|string|in:text,image,video,poll',
+            'poll.options' => 'required_if:postType,poll|array|min:2', // Poll options are required only if postType is poll
+            'poll.options.*' => 'required_if:postType,poll|string',
         ];
     }
 }

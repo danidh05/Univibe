@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('media_url')->nullable();
             $table->integer('comment_count')->default('0');
             $table->integer('like_count')->default('0');
-            $table->enum('postType', ['text', 'image', 'video']);
+            $table->enum('postType', ['text', 'image', 'video' , 'poll']);
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

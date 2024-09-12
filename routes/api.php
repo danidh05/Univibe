@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LikeController;
+use App\Http\Controllers\PollController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommentController;
 
@@ -28,3 +29,8 @@ Route::delete('/delete_comment/{commentId}' , [CommentController::class , 'delet
 
 // {{ Like }}
 Route::post('/like_post/{postId}' , [LikeController::class , 'likePost']);
+
+
+// {{ Poll }}
+Route::post('/posts/{postId}/vote', [PollController::class, 'vote']);
+// Route::get('/posts/{postId}/poll-results', [PollController::class, 'getPollResults']);

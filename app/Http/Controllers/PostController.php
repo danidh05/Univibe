@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\PostRequest;
 use Illuminate\Http\Response;
+use App\Models\PollOption;
 
 
 class PostController extends Controller
@@ -14,7 +15,7 @@ class PostController extends Controller
     public function index()
     {
         try {
-            $posts = Post::orderBy('created_at', 'desc')->get();
+            $posts = Post::with('pollOptions')->orderBy('created_at', 'desc')->get();
 
             return response()->json($posts, 200);
 
@@ -29,6 +30,15 @@ class PostController extends Controller
     {
         try {
             $post = Post::create($request->validated());
+
+            if ($post->postType === 'poll') {
+                foreach ($request->poll['options'] as $option) {
+                    PollOption::create([
+                        'post_id' => $post->id,
+                        'option' => $option
+                    ]);
+                }
+            }
 
             return response()->json($post,  Response::HTTP_CREATED);
 
