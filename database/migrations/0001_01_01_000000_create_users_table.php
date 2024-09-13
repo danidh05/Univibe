@@ -18,9 +18,11 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('bio')->nullable();;
-            $table->boolean('isActive');
+            $table->boolean('isActive')->default(0);
             $table->boolean('isVerified')->default(0);
             $table->foreignId('role_id')->default(2)->constrained()->onDelete('cascade');
+            $table->foreignId('major_id')->constrained("majors")->onDelete('cascade');
+            $table->foreignId('university_id')->constrained("universities")->onDelete('cascade');
 
             $table->rememberToken();
             $table->string('profile_picture', 2048)->nullable();

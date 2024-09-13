@@ -14,4 +14,8 @@ class University extends Model
     {
         return $this->hasMany(Faculty::class);
     }
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
 }

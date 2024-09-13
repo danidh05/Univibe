@@ -26,6 +26,8 @@ class User extends Authenticatable implements MustVerifyEmail
         "bio",
         "isActive",
         "isVerified",
+        'major_id',
+        'university_id',
     ];
 
     /**
@@ -53,5 +55,15 @@ class User extends Authenticatable implements MustVerifyEmail
     public function role()
     {
         return $this->belongsTo(Role::class);
+    }
+
+    public function major()
+    {
+        return $this->belongsTo(Major::class);
+    }
+
+    public function university()
+    {
+        return $this->belongsTo(University::class);
     }
 }

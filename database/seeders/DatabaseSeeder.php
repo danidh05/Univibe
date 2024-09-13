@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\University;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -16,5 +17,9 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         $this->call(RolesTableSeeder::class);
+        $this->call(UnivristySeeder::class);
+
+        $this->call(FacultySeeder::class);
+        $this->call(MajorSeeder::class);
     }
 }

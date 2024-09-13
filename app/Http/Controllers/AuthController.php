@@ -37,6 +37,9 @@ class AuthController extends Controller
                 'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
                 "isVerified" => "boolean",
                 "isActive" => "nullable|boolean",
+                "university_id" => "integer|required",
+                "major_id" => "integer|required",
+
 
             ],
             [
