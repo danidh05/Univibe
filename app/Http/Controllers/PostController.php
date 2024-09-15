@@ -4,14 +4,25 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Models\User;
-use Illuminate\Http\Request;
-use App\Http\Requests\PostRequest;
-use Illuminate\Http\Response;
 use App\Models\PollOption;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use App\Http\Requests\PostRequest;
 
 
 class PostController extends Controller
 {
+    public function show(Post $post)
+    {
+
+        return response()->json([
+            'title' => $post->title,
+            'content' => $post->content,
+            'created_at' => $post->created_at->format('M d, Y'),
+            'author' => $post->user->name // Assuming the Post model has a relationship with User
+        ], 200);
+    }
+
     public function index()
     {
         try {

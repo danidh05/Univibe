@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Like;
 use App\Models\User;
+use App\Models\Share;
 use App\Models\Comment;
 use App\Models\PollOption;
 use Illuminate\Database\Eloquent\Model;
@@ -38,5 +39,10 @@ class Post extends Model
     public function pollOptions()
     {
         return $this->hasMany(PollOption::class);
+    }
+
+    public function shares()
+    {
+        return $this->hasMany(Share::class);
     }
 }

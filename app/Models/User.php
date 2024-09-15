@@ -3,9 +3,10 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Models\Share;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class User extends Authenticatable
 {
@@ -31,6 +32,17 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    public function shares()
+    {
+        return $this->hasMany(Share::class, 'user_id');
+    }
+
+    // This user receives shared posts
+    public function receivedShares()
+    {
+        return $this->hasMany(Share::class, 'recipient_id');
+    }
 
     /**
      * Get the attributes that should be cast.

@@ -7,6 +7,7 @@ use App\Http\Controllers\PollController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\SavePostController;
+use App\Http\Controllers\SharePostController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -20,6 +21,7 @@ Route::post('/add_post' , [PostController::class , 'add_post']);
 Route::put('/update_post/{id}' , [PostController::class , 'update_post']);
 Route::delete('/delete_post/{id}' , [PostController::class , 'delete_post']);
 Route::get('/show_user_post/{id}' , [PostController::class , 'show_user_post']);
+Route::get('/posts/{post}', [PostController::class, 'show'])->name('posts.show');// show single post
 
 
 // {{  Comment }}
@@ -40,3 +42,9 @@ Route::post('/posts/{postId}/vote', [PollController::class, 'vote']);
 Route::post('/save_post/{postId}', [SavePostController::class, 'savePost']);
 Route::get('/get_save_post', [SavePostController::class, 'getAllSavePost']);
 Route::delete('/delete_save_post/{postId}', [SavePostController::class, 'deleteSavePost']);
+
+
+// {{ Share Post}}
+Route::post('/posts/{postId}/share-user', [SharePostController::class, 'ShareWithUsers'])->middleware('auth');
+Route::get('/posts/{postId}/copy-link', [SharePostController::class, 'copyLink'])->middleware('auth');
+
