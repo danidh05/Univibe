@@ -6,9 +6,22 @@ use App\Models\Post;
 use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Services\NotificationService;
 
 class CommentController extends Controller
 {
+
+    protected $notificationService;
+
+    /**
+     * Inject NotificationService into the controller.
+     */
+    public function __construct(NotificationService $notificationService)
+    {
+        $this->notificationService = $notificationService;
+    }
+
+
     public function show_post_commnent($postId)
     {
         $comments = Comment::with('post')
@@ -31,13 +44,33 @@ class CommentController extends Controller
                 'content' => 'required|string|max:255',
             ]);
 
-            $post = Post::find($postId);  
+            $post = Post::find($postId);
 
             $comment = new Comment();
             $comment->user_id = Auth::id();
             $comment->post_id = $post->id;
             $comment->content = $request->content;
             $comment->save();
+
+            $notification_content = Auth::user()->username . ' commented on your post.';
+
+            // Prepare notification data
+            $notification_data = [
+                'post_id' => $post->id,
+                'comment_id' => $comment->id,
+                'user_id' => 1,
+                'user_name' => Auth::user()->username,
+                'comment_content' => $comment->content,
+            ];
+
+            // Send the notification using NotificationService
+            $this->notificationService->createNotification(
+                $post->user_id,                      // The post owner (who will receive the notification)
+                'comment',                           // Type of notification
+                $notification_content,               // Notification content
+                $notification_data,                  // Additional data (comment info)
+                'posts.' . $post->user_id            // Pusher channel (target post owner)
+            );
 
             return response()->json($comment, 201);
         } catch (\Exception $e) {
