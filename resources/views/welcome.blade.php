@@ -183,8 +183,8 @@
       cluster: 'eu'
     });
 
-    var channel = pusher.subscribe('my-channel');
-    channel.bind('private-message-event', function(data) {
+    var channel = pusher.subscribe('user-1');
+    channel.bind('notification-event', function(data) {
       alert(JSON.stringify(data));
     });
   </script>

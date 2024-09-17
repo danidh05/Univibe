@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use PhpParser\Node\Stmt\TryCatch;
 use App\Events\YourEventName;
+use App\Models\User;
 
 class MessageController extends Controller
 {
@@ -18,6 +19,7 @@ class MessageController extends Controller
                 'content' => 'required|string|max:255',
             ]);
 
+            $receiving_user = User::find($request->input('receiver_id'));
             $string = app('profanityFilter')->filter($request->input('content'));
     
             $message = Message::create([
@@ -36,7 +38,8 @@ class MessageController extends Controller
             ];
 
             // Dispatch the event
-            event(new PrivateMessageSent($messageData));
+            $pusher_channel = $receiving_user->pusher_channel;
+            event(new PrivateMessageSent($messageData, $pusher_channel));
     
             return response()->json([
                 'success' => true,
@@ -59,14 +62,12 @@ class MessageController extends Controller
         }
     }
 
-    public function getPrivateMessages(Request $request){
+    public function getPrivateMessages($user_id){
         try {
-            $request->validate([
-                'user_id' => 'required|exists:users,id',
-            ]);
+            $user = User::findOrFail($user_id);
     
             $authUserId = Auth::id();
-            $targetUserId = $request->input('user_id');
+            $targetUserId = $user_id;
     
             $messages = Message::where(function ($query) use ($authUserId, $targetUserId) {
                 $query->where('sender_id', $authUserId)
@@ -83,13 +84,12 @@ class MessageController extends Controller
                 'success' => true,
                 'data' => $messages,
             ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            // Return a custom validation error response
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            // User not found
             return response()->json([
                 'success' => false,
-                'message' => 'Validation failed.',
-                'errors' => $e->errors(),
-            ], 422);
+                'message' => 'User not found.',
+            ], 404);
         } catch (\Throwable $th) {
             // Return a generic error response
             return response()->json([

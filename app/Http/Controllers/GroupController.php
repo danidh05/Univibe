@@ -19,7 +19,8 @@ class GroupController extends Controller
     
             $group = new GroupChat();
             $group->group_name = $request->input('name');
-            $group->group_photo = $request->input('photo');
+            $filePath = $request->file('photo')->store('group_pictures', 'public');
+            $group->group_photo = $filePath;
             $group->owner_id = Auth::id();
             $group->save();
 
@@ -120,11 +121,12 @@ class GroupController extends Controller
             if ($request->hasFile('photo')) {
                 // Delete the old photo if it exists !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! //
                 if ($groupChat->photo) {
-                    Storage::delete($groupChat->photo);
+                    // Storage::delete($groupChat->photo);
+                    Storage::disk('public')->delete($groupChat->photo);
                 }
 
                 // Store the new photo
-                $photoPath = $request->file('photo')->store('group_photos');
+                $photoPath = $request->file('photo')->store('group_pictures','public');
 
                 $groupChat->group_photo = $photoPath;
             }

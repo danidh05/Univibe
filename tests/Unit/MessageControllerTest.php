@@ -119,7 +119,7 @@ class MessageControllerTest extends TestCase
         ]);
 
         // Send request to get messages
-        $response = $this->getJson('/api/messages/get?user_id=' . $otherUser->id);
+        $response = $this->getJson('/api/messages/get/' . $otherUser->id);
 
         // Assert correct response
         $response->assertStatus(200)
@@ -133,10 +133,9 @@ class MessageControllerTest extends TestCase
 
     public function test_get_private_messages_validation_error()
     {
-        $response = $this->getJson('/api/messages/get', []);
+        $response = $this->getJson('/api/messages/get/');
 
-        $response->assertStatus(422)
-                ->assertJsonValidationErrors(['user_id']);
+        $response->assertStatus(404);
     }
 
     public function test_delete_private_message()

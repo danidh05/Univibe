@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Role;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -47,5 +48,17 @@ class UserFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
         ]);
+    }
+
+        /**
+     * Configure the factory to add the pusher_channel after creation.
+     */
+    public function configure(): static
+    {
+        return $this->afterCreating(function (User $user) {
+            // Set the pusher_channel based on the user's ID
+            $user->pusher_channel = 'user-' . $user->id;
+            $user->save();
+        });
     }
 }

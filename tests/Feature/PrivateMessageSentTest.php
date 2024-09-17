@@ -12,8 +12,7 @@ class PrivateMessageSentTest extends TestCase
 {
     use RefreshDatabase;
 
-    #[Test]
-    public function it_dispatches_private_message_sent_event()
+    public function test_it_dispatches_private_message_sent_event()
     {
         // Arrange
         Event::fake(); // Fake events
@@ -25,7 +24,7 @@ class PrivateMessageSentTest extends TestCase
         ];
 
         // Act
-        event(new PrivateMessageSent($messageData));
+        event(new PrivateMessageSent($messageData, 'test_channel'));
 
         // Assert
         Event::assertDispatched(PrivateMessageSent::class, function ($event) use ($messageData) {
