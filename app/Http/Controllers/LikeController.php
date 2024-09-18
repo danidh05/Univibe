@@ -75,7 +75,7 @@ class LikeController extends Controller
                 'like',                              // Type of notification
                 $notification_content,               // Content of the notification
                 $notification_data,                  // Additional data
-                'posts.' . $post->user_id            // Pusher channel (target post owner)
+                $post->user->pusher_channel          // Pusher channel (target post owner)
             );
 
             return response()->json(['message' => 'Post Liked and Notification Sent'], 200);
