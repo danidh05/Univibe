@@ -34,7 +34,6 @@ class NotificationService
      */
     public function createNotification($user_id, $type, $content, $data, $pusher_channel)
     {
-        
         // Store the notification in the database
         $notification = Notification::create([
             'user_id' => $user_id,
