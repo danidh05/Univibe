@@ -66,4 +66,13 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->belongsTo(University::class);
     }
+    public function blockedUsers()
+    {
+        return $this->hasMany(Block::class);
+    }
+
+    public function blockedByUsers()
+    {
+        return $this->hasMany(Block::class);
+    }
 }
