@@ -2,15 +2,16 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\Share;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -18,9 +19,17 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'username',
         'email',
         'password',
+        'profile_picture',
+        'bio',
+        'role_id',
+        'is_active',
+        'is_verified',
+        'major_id',
+        'university_id',
+        'pusher_channel',
     ];
 
     /**
@@ -55,5 +64,91 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+    public function followers()
+    {
+        return $this->hasMany(Follows::class, 'followed_id');
+    }
+
+    public function following()
+    {
+        return $this->hasMany(Follows::class, 'follower_id');
+    }
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function major()
+    {
+        return $this->belongsTo(Major::class);
+    }
+
+    public function university()
+    {
+        return $this->belongsTo(University::class);
+    }
+  
+    public function messagesSent()
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+    
+    public function messagesReceived()
+    {
+        return $this->hasMany(Message::class, 'receiver_id');
+    }
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
+    }
+
+    public function ownedGroups()
+    {
+        return $this->hasMany(GroupChat::class, 'owner_id');
+    }
+
+    public function groups()
+    {
+        return $this->belongsToMany(GroupChat::class, 'group_members');
+    }
+
+    public function friends()
+    {
+        return $this->hasMany(Follows::class, 'follower_id')
+                    ->where('is_friend', true);
+    }
+
+    public function sentFriendRequests()
+    {
+        return $this->hasMany(FriendRequest::class, 'from_id');
+    }
+
+    public function receivedFriendRequests()
+    {
+        return $this->hasMany(FriendRequest::class, 'to_id');
+    }
+
+    public function isFollowing($userId)
+    {
+        return $this->followings()->where('followed_id', $userId)->exists();
+    }
+
+    // Check if a user is followed by another user
+    public function isFollowedBy($userId)
+    {
+        return $this->followers()->where('follower_id', $userId)->exists();
+    }
+
+    // Check if two users are friends (mutual follows and is_friend = true)
+    public function isFriend($userId)
+    {
+        // Check mutual follows
+        $following = $this->following()->where('followed_id', $userId)->where('is_friend', true)->exists();
+        $followed = $this->followers()->where('follower_id', $userId)->where('is_friend', true)->exists();
+        
+        return $following && $followed;
     }
 }

@@ -29,3 +29,29 @@
     <p>Try posting a comment and see the notification appear here!</p>
 </body>
 </html>
+<!DOCTYPE html>
+<head>
+  <title>Pusher Test</title>
+  <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+  <script>
+
+    // Enable pusher logging - don't include this in production
+    Pusher.logToConsole = true;
+
+    var pusher = new Pusher('3507beec7b447a9ce08e', {
+      cluster: 'eu'
+    });
+
+    var channel = pusher.subscribe('user-1');
+    channel.bind('notification-event', function(data) {
+      alert(JSON.stringify(data));
+    });
+  </script>
+</head>
+<body>
+  <h1>Pusher Test</h1>
+  <p>
+    Try publishing an event to channel <code>my-channel</code>
+    with event name <code>my-event</code>.
+  </p>
+</body>
