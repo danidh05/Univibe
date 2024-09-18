@@ -22,7 +22,6 @@ class AuthTest extends TestCase
         $this->seed(RolesTableSeeder::class);
         $this->seed(UnivristySeeder::class);
         $this->seed(FacultySeeder::class);
-
         $this->seed(MajorSeeder::class);
 
 
@@ -37,7 +36,7 @@ class AuthTest extends TestCase
             'university_id' => 1,
             'major_id' => 2,
             'profile_picture' => null,
-            'isVerified' => true,
+            'is_verified' => true,
         ]);
 
         $response->assertStatus(200)

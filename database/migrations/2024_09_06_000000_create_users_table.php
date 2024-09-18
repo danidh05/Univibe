@@ -23,7 +23,6 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('pusher_channel')->nullable();
-            $table->string('profile_picture')->nullable();
             $table->text('bio')->nullable();
             $table->foreignId('role_id')->default(2)->constrained()->onDelete('cascade');
             $table->boolean('is_active')->default(1);

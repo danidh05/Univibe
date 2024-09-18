@@ -63,7 +63,7 @@ class AuthController extends Controller
 
 
         $user = User::create($formFields);
-        $user->pusher_channel = 'user-' . $user->id
+        $user->pusher_channel = 'user-' . $user->id;
         $user->save();
 
         // $token = $user->createToken('main')->plainTextToken;

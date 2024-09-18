@@ -35,7 +35,7 @@ class LikeControllerTest extends TestCase
 
         // Check that the like was successful and the like count increased
         $response->assertStatus(200)
-                 ->assertJson(['message' => 'Post Liked']);
+                 ->assertJson(['message' => 'Post Liked and Notification Sent']);
 
         // Check that a Like entry was created in the database
         $this->assertDatabaseHas('likes', [

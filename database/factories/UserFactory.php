@@ -2,7 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\Major;
 use App\Models\Role;
+use App\Models\University;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -27,6 +29,8 @@ class UserFactory extends Factory
     {
 
         $role = Role::first() ?? Role::factory()->create();
+        $major = Major::first() ?? Major::factory()->create();
+        $university = University::first() ?? University::factory()->create();
 
         return [
             'username' => fake()->name(),
@@ -37,6 +41,8 @@ class UserFactory extends Factory
             'role_id' => $role->id,
             'bio' => 'bio',
             'is_verified' => 1,
+            'major_id' => $major->id, // Adding majors_id
+            'university_id' => $university->id, // Adding university_id
         ];
     }
 
