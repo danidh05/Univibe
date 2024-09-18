@@ -69,7 +69,7 @@ class CommentController extends Controller
                 'comment',                           // Type of notification
                 $notification_content,               // Notification content
                 $notification_data,                  // Additional data (comment info)
-                'posts.' . $post->user_id            // Pusher channel (target post owner)
+                $post->user->pusher_channel            // Pusher channel (target post owner)
             );
 
             return response()->json($comment, 201);
