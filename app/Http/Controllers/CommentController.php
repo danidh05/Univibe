@@ -58,7 +58,7 @@ class CommentController extends Controller
             $notification_data = [
                 'post_id' => $post->id,
                 'comment_id' => $comment->id,
-                'user_id' => 1,
+                'user_id' => Auth::id(),
                 'user_name' => Auth::user()->username,
                 'comment_content' => $comment->content,
             ];
