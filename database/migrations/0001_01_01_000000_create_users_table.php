@@ -11,19 +11,25 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::create('roles', function (Blueprint $table) {
+            $table->id();
+            $table->string('role_name');
+        });
+
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('Username');
+            $table->string('username');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('bio')->nullable();;
-            $table->boolean('isActive')->default(0);
-            $table->boolean('isVerified')->default(0);
+            $table->string('pusher_channel')->nullable();
+            $table->string('profile_picture')->nullable();
+            $table->text('bio')->nullable();
             $table->foreignId('role_id')->default(2)->constrained()->onDelete('cascade');
+            $table->boolean('is_active')->default(1);
+            $table->boolean('is_verified')->default(0);
             $table->foreignId('major_id')->constrained("majors")->onDelete('cascade');
             $table->foreignId('university_id')->constrained("universities")->onDelete('cascade');
-
             $table->rememberToken();
             $table->string('profile_picture', 2048)->nullable();
             $table->timestamps();
@@ -50,6 +56,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('roles');
         Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');

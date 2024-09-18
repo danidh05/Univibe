@@ -35,8 +35,8 @@ class AuthController extends Controller
                         ->symbols()
                 ],
                 'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-                "isVerified" => "boolean",
-                "isActive" => "nullable|boolean",
+                "is_verified" => "boolean",
+                "is_active" => "nullable|boolean",
                 "university_id" => "integer|required",
                 "major_id" => "integer|required",
 
@@ -49,20 +49,22 @@ class AuthController extends Controller
 
 
         if ($request->hasFile('profile_picture')) {
-            $profilePicturePath = $request->file('profile_picture')->store('images', 'public');
+            $profilePicturePath = $request->file('profile_picture')->store('profile_pictures', 'public');
             $formFields['profile_picture'] = $profilePicturePath;
         } else {
             $formFields['profile_picture'] = null;
         }
 
 
-        $formFields['Username'] = $formFields['first_name'] . ' ' . $formFields['last_name'];
+        $formFields['username'] = $formFields['first_name'] . ' ' . $formFields['last_name'];
 
 
         $formFields['password'] = bcrypt($formFields['password']);
 
 
         $user = User::create($formFields);
+        $user->pusher_channel = 'user-' . $user->id
+        $user->save();
 
         // $token = $user->createToken('main')->plainTextToken;
 
