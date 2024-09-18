@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\EmailVerficationController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\FollowsController;
 use App\Http\Controllers\FriendRequestController;
 use App\Http\Controllers\GroupController;
@@ -16,6 +19,20 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+// Ahmed
+Route::get('/email/verify/{id}/{hash}', [EmailVerficationController::class, "verfiy"])->name('verification.verify');
+
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::middleware('userAdmin')->group(function () {
+        Route::get('/admin', [UserController::class, 'getAdminInfo']);
+    });
+});
+
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+
+// Ralph
 Route::post('/messages/send', [MessageController::class, 'sendPrivateMessage']);
 Route::get('/messages/get/{user_id}', [MessageController::class, 'getPrivateMessages']);
 Route::put('/messages/update', [MessageController::class, 'updatePrivateMessage']);

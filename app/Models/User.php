@@ -2,14 +2,15 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -25,6 +26,8 @@ class User extends Authenticatable
         'role_id',
         'is_active',
         'is_verified',
+        'major_id',
+        'university_id',
         'pusher_channel',
     ];
 
@@ -50,7 +53,6 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-
     public function followers()
     {
         return $this->hasMany(Follows::class, 'followed_id');
@@ -66,6 +68,16 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class);
     }
 
+    public function major()
+    {
+        return $this->belongsTo(Major::class);
+    }
+
+    public function university()
+    {
+        return $this->belongsTo(University::class);
+    }
+  
     public function messagesSent()
     {
         return $this->hasMany(Message::class, 'sender_id');

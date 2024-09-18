@@ -25,10 +25,13 @@ return new class extends Migration
             $table->string('pusher_channel')->nullable();
             $table->string('profile_picture')->nullable();
             $table->text('bio')->nullable();
-            $table->foreignId('role_id')->constrained()->onDelete('cascade');
+            $table->foreignId('role_id')->default(2)->constrained()->onDelete('cascade');
             $table->boolean('is_active')->default(1);
             $table->boolean('is_verified')->default(0);
+            $table->foreignId('major_id')->constrained("majors")->onDelete('cascade');
+            $table->foreignId('university_id')->constrained("universities")->onDelete('cascade');
             $table->rememberToken();
+            $table->string('profile_picture', 2048)->nullable();
             $table->timestamps();
         });
 
