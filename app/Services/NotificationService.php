@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use Pusher\Pusher;
 use App\Models\Notification;
+use Pusher\Pusher;
 
 class NotificationService
 {
@@ -19,9 +19,7 @@ class NotificationService
             config('broadcasting.connections.pusher.key'),
             config('broadcasting.connections.pusher.secret'),
             config('broadcasting.connections.pusher.app_id'),
-            [
-                'cluster' => config('broadcasting.connections.pusher.options.cluster')
-            ]
+            ['cluster' => config('broadcasting.connections.pusher.options.cluster')]
         );
     }
 
@@ -36,7 +34,6 @@ class NotificationService
      */
     public function createNotification($user_id, $type, $content, $data, $pusher_channel)
     {
-
         // Store the notification in the database
         $notification = Notification::create([
             'user_id' => $user_id,
