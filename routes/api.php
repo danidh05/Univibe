@@ -58,6 +58,10 @@ Route::delete('/delete_save_post/{postId}', [SavePostController::class, 'deleteS
 Route::post('/posts/{postId}/share-user', [SharePostController::class, 'ShareWithUsers'])->middleware('auth');
 Route::get('/posts/{postId}/copy-link', [SharePostController::class, 'copyLink'])->middleware('auth');
 
+// {{ Repost }}
+Route::post('/posts/{id}/repost', [RepostController::class, 'repost'])->middleware('auth');
+Route::delete('/posts/{id}/repost', [RepostController::class, 'deleteRepost'])->middleware('auth');
+
 
 // Ahmed
 Route::get('/email/verify/{id}/{hash}', [EmailVerficationController::class, "verfiy"])->name('verification.verify');
@@ -109,6 +113,4 @@ Route::get('/user/is_friend/{user_id}', [FriendRequestController::class, 'is_fri
 Route::post('/user/update', [ProfileController::class, 'updateProfile']);
 
 
-// {{ Repost }}
-Route::post('/posts/{id}/repost', [RepostController::class, 'repost'])->middleware('auth');
-Route::delete('/posts/{id}/repost', [RepostController::class, 'deleteRepost'])->middleware('auth');
+

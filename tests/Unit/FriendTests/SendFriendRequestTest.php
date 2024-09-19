@@ -2,15 +2,15 @@
 
 namespace Tests\Unit;
 
-use App\Models\User;
-use App\Models\FriendRequest;
-use App\Models\Follows;
-use App\Services\NotificationService;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
-use Mockery\MockInterface;
 use Tests\TestCase;
+use App\Models\User;
+use App\Models\Follows;
+use Mockery\MockInterface;
+use App\Models\FriendRequest;
+use App\Services\NotificationService;
 use PHPUnit\Framework\Attributes\Test;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class SendFriendRequestTest extends TestCase
 {

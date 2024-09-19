@@ -82,16 +82,35 @@ class PostController extends Controller
         try {
             $post = Post::find($id);
 
+            if (!$post) {
+                return response()->json(['error' => 'Post not found'], 404);
+            }
+
+            // Update the post itself
             $post->update($request->validated());
 
-            return response()->json($post, Response::HTTP_CREATED);
+            // Handle poll options if the postType is 'poll'
+            if ($post->postType === 'poll' && isset($request->poll['options'])) {
+                // Delete old poll options
+                PollOption::where('post_id', $post->id)->delete();
+
+                // Add updated poll options
+                foreach ($request->poll['options'] as $option) {
+                    PollOption::create([
+                        'post_id' => $post->id,
+                        'option' => $option
+                    ]);
+                }
+            }
+
+            return response()->json($post->load('pollOptions'), Response::HTTP_CREATED);
 
         } catch (\Exception $e) {
-
             // Log::error('Error updating post: '.$e->getMessage());
             return response()->json(['error' => 'Failed to update post'], 500);
         }
     }
+
 
     public function delete_post($id)
     {
