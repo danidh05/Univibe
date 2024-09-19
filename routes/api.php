@@ -23,6 +23,8 @@ Route::get('/email/verify/{id}/{hash}', [EmailVerficationController::class, "ver
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/blockUser', [BlockController::class, 'blockUser']);
+    Route::put('/unblockUser', [BlockController::class, 'unblockUser']);
+
     Route::get('/getBlockedAccounts', [BlockController::class, 'getBlockedAccounts']);
     Route::get('/getMyReports', [ReportController::class, 'getMyReports']);
     Route::post('/reportUser', [ReportController::class, 'reportUser']);

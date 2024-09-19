@@ -55,4 +55,29 @@ class BlockController extends Controller
             'blocked_users' => $blockedUsers,
         ], 200);
     }
+    public function unblockUser(Request $request)
+    {
+        $request->validate([
+            'blocked_user_id' => 'required|exists:users,id',
+        ]);
+
+        $blockerUserId = Auth::id();
+        $blockedUserId = $request->input('blocked_user_id');
+
+        $block = Block::where('blocker_user_id', $blockerUserId)
+            ->where('blocked_user_id', $blockedUserId)
+            ->first();
+
+        if (!$block) {
+            return response()->json([
+                'message' => 'User is not blocked.'
+            ], 404);
+        }
+
+        $block->delete();
+
+        return response()->json([
+            'message' => 'User has been successfully unblocked.',
+        ], 200);
+    }
 }
