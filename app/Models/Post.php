@@ -45,4 +45,10 @@ class Post extends Model
     {
         return $this->hasMany(Share::class);
     }
+
+    public function reposts()
+    {
+    return $this->hasMany(Repost::class);
+    }
+
 }

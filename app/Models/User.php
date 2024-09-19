@@ -44,6 +44,12 @@ class User extends Authenticatable
         return $this->hasMany(Share::class, 'recipient_id');
     }
 
+    public function reposts()
+{
+    return $this->hasMany(Repost::class);
+}
+
+
     /**
      * Get the attributes that should be cast.
      *

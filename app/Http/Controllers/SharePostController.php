@@ -36,6 +36,7 @@ class SharePostController extends Controller
 
             return response()->json([
                 'message' => 'Post shared successfully.',
+                'post'    => $post,
                 'post_link' => route('posts.show', ['post' => $post->id])
             ], 200);
 
@@ -48,8 +49,6 @@ class SharePostController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
-
-
 
     public function copyLink($postId)
     {

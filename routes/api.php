@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PollController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\RepostController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\SavePostController;
 use App\Http\Controllers\SharePostController;
@@ -47,4 +48,8 @@ Route::delete('/delete_save_post/{postId}', [SavePostController::class, 'deleteS
 // {{ Share Post}}
 Route::post('/posts/{postId}/share-user', [SharePostController::class, 'ShareWithUsers'])->middleware('auth');
 Route::get('/posts/{postId}/copy-link', [SharePostController::class, 'copyLink'])->middleware('auth');
+
+// {{ Repost }}
+Route::post('/posts/{id}/repost', [RepostController::class, 'repost'])->middleware('auth');
+Route::delete('/posts/{id}/repost', [RepostController::class, 'deleteRepost'])->middleware('auth');
 
