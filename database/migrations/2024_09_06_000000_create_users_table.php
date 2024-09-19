@@ -27,6 +27,8 @@ return new class extends Migration
             $table->foreignId('role_id')->default(2)->constrained()->onDelete('cascade');
             $table->boolean('is_active')->default(1);
             $table->boolean('is_verified')->default(0);
+            $table->boolean('is_deactivated')->default(0);
+
             $table->foreignId('major_id')->constrained("majors")->onDelete('cascade');
             $table->foreignId('university_id')->constrained("universities")->onDelete('cascade');
             $table->rememberToken();

@@ -28,21 +28,21 @@ Route::get('/user', function (Request $request) {
 // Jorj
 
 // {{ Post }}
-Route::get('/show_posts' , [PostController::class , 'index']);
-Route::post('/add_post' , [PostController::class , 'add_post']);
-Route::put('/update_post/{id}' , [PostController::class , 'update_post']);
-Route::delete('/delete_post/{id}' , [PostController::class , 'delete_post']);
-Route::get('/show_user_post/{id}' , [PostController::class , 'show_user_post']);
-Route::get('/posts/{post}', [PostController::class, 'show'])->name('posts.show');// show single post
+Route::get('/show_posts', [PostController::class, 'index']);
+Route::post('/add_post', [PostController::class, 'add_post']);
+Route::put('/update_post/{id}', [PostController::class, 'update_post']);
+Route::delete('/delete_post/{id}', [PostController::class, 'delete_post']);
+Route::get('/show_user_post/{id}', [PostController::class, 'show_user_post']);
+Route::get('/posts/{post}', [PostController::class, 'show'])->name('posts.show'); // show single post
 
 // {{  Comment }}
-Route::get('/show_comment/{postId}' , [CommentController::class , 'show_post_commnent']);
-Route::post('/add_comment/{postId}' , [CommentController::class , 'add_comment']);
-Route::put('/update_comment/{commentId}' , [CommentController::class , 'update_comment']);
-Route::delete('/delete_comment/{commentId}' , [CommentController::class , 'delete_comment']);
+Route::get('/show_comment/{postId}', [CommentController::class, 'show_post_commnent']);
+Route::post('/add_comment/{postId}', [CommentController::class, 'add_comment']);
+Route::put('/update_comment/{commentId}', [CommentController::class, 'update_comment']);
+Route::delete('/delete_comment/{commentId}', [CommentController::class, 'delete_comment']);
 
 // {{ Like }}
-Route::post('/like_post/{postId}' , [LikeController::class , 'likePost']);
+Route::post('/like_post/{postId}', [LikeController::class, 'likePost']);
 
 // {{ Poll }}
 Route::post('/posts/{postId}/vote', [PollController::class, 'vote']);
@@ -63,6 +63,10 @@ Route::get('/email/verify/{id}/{hash}', [EmailVerficationController::class, "ver
 
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::controller(UserController::class)->group(function () {
+        Route::put('/undeactivate', "undeactivate");
+        Route::put('/deactivate',  "deactivate");
+    });
     Route::middleware('userAdmin')->group(function () {
         Route::get('/admin', [UserController::class, 'getAdminInfo']);
     });

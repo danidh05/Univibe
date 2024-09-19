@@ -92,7 +92,7 @@ class AuthController extends Controller
             $userData['role'] = ['Role_name' => $user->role ? $user->role->Role_name : null];
 
             $token = $user->createToken('main')->plainTextToken;
-            if ($user->isVerified) {
+            if ($user->is_verified) {
 
                 return response()->json([
                     'message' => 'Login successful',

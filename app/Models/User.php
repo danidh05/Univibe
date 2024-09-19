@@ -29,6 +29,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'is_verified',
         'major_id',
         'university_id',
+        "is_deactivated",
         'pusher_channel',
     ];
 
@@ -89,12 +90,12 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->belongsTo(University::class);
     }
-  
+
     public function messagesSent()
     {
         return $this->hasMany(Message::class, 'sender_id');
     }
-    
+
     public function messagesReceived()
     {
         return $this->hasMany(Message::class, 'receiver_id');
@@ -118,7 +119,7 @@ class User extends Authenticatable implements MustVerifyEmail
     public function friends()
     {
         return $this->hasMany(Follows::class, 'follower_id')
-                    ->where('is_friend', true);
+            ->where('is_friend', true);
     }
 
     public function sentFriendRequests()
@@ -148,7 +149,7 @@ class User extends Authenticatable implements MustVerifyEmail
         // Check mutual follows
         $following = $this->following()->where('followed_id', $userId)->where('is_friend', true)->exists();
         $followed = $this->followers()->where('follower_id', $userId)->where('is_friend', true)->exists();
-        
+
         return $following && $followed;
     }
 }
