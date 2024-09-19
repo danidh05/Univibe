@@ -19,7 +19,6 @@ return new class extends Migration
             $table->foreignId('reported_user_id')
                 ->constrained('users')
                 ->onDelete('cascade');
-            $table->string("reason");
 
             $table->string("Descreption_reason")->nullable();
 

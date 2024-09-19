@@ -13,7 +13,6 @@ class ReportController extends Controller
         // Validate the request
         $request->validate([
             'reported_user_id' => 'required|exists:users,id',
-            'reason' => 'required|string|max:255',
             'Descreption_reason' => 'nullable|string|max:1000',
         ]);
 
@@ -23,7 +22,6 @@ class ReportController extends Controller
         $report = Report::create([
             'reporter_user_id' => $reporterUserId,
             'reported_user_id' => $request->input('reported_user_id'),
-            'reason' => $request->input('reason'),
             'Descreption_reason' => $request->input('Descreption_reason'),
         ]);
 
