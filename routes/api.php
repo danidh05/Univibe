@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PollController;
 use App\Http\Controllers\PostController;
@@ -68,9 +69,16 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/deactivate',  "deactivate");
     });
     Route::middleware('userAdmin')->group(function () {
-        Route::get('/admin', [UserController::class, 'getAdminInfo']);
+        Route::controller(AdminController::class)->group(function () {
+            Route::post('/createAboutUsTitle', "createAboutUsTitle");
+            Route::post('/createAboutUsDetail/{id}', "createAboutUsDetail");
+
+            Route::get('/getAllAboutUsWithDetails', "getAllAboutUsWithDetails");
+            Route::get('/getsingleAboutUsWithDetails/{id}', "getsingleAboutUsWithDetails");
+        });
     });
 });
+
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
