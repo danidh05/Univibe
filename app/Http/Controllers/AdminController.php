@@ -58,4 +58,35 @@ class AdminController extends Controller
             'data' => $aboutUsWithDetails
         ], 200);
     }
+    public function updateAboutUs(Request $request, $id)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+        ]);
+
+        $aboutUs = Aboutus::findOrFail($id);
+        $aboutUs->title = $request->input('title');
+        $aboutUs->save();
+
+        return response()->json([
+            'message' => 'About Us updated successfully!',
+            'data' => $aboutUs
+        ], 200);
+    }
+
+    public function updateAboutUsDetail(Request $request, $aboutUsId)
+    {
+        $request->validate([
+            'description' => 'required|string|max:500',
+        ]);
+
+        $aboutUsDetail = AboutusDetails::where('about_us_id', $aboutUsId)->firstOrFail();
+        $aboutUsDetail->description = $request->input('description');
+        $aboutUsDetail->save();
+
+        return response()->json([
+            'message' => 'About Us detail updated successfully!',
+            'data' => $aboutUsDetail
+        ], 200);
+    }
 }

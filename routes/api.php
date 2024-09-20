@@ -75,6 +75,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
             Route::get('/getAllAboutUsWithDetails', "getAllAboutUsWithDetails");
             Route::get('/getsingleAboutUsWithDetails/{id}', "getsingleAboutUsWithDetails");
+            Route::put('/updateAboutUs/{id}', "updateAboutUs"); // Add this line
+            Route::put('/updateAboutUsDetail/{id}', "updateAboutUsDetail");
         });
     });
 });
