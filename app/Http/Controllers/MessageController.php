@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use PhpParser\Node\Stmt\TryCatch;
 use App\Events\YourEventName;
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 
 class MessageController extends Controller
 {
@@ -17,15 +18,36 @@ class MessageController extends Controller
             $request->validate([
                 'receiver_id' => 'required|exists:users,id',
                 'content' => 'required|string|max:255',
+                'media' => 'nullable|mimes:jpeg,png,jpg,mp4,mov,avi|max:20480',
             ]);
 
             $receiving_user = User::find($request->input('receiver_id'));
             $string = app('profanityFilter')->filter($request->input('content'));
+
+            // Handle media upload
+            $mediaUrl = null;
+            $messageType = 'text';
+
+            if ($request->hasFile('media')) {
+                // Store the media in the public/messages folder
+                $mediaPath = $request->file('media')->store('messages', 'public');
+                // Get the public URL of the uploaded media
+                $mediaUrl = $mediaPath;
+                // Set message type based on the file type
+                $mimeType = $request->file('media')->getMimeType();
+                if (str_contains($mimeType, 'image')) {
+                    $messageType = 'image';
+                } elseif (str_contains($mimeType, 'video')) {
+                    $messageType = 'video';
+                }
+            }
     
             $message = Message::create([
                 'sender_id' => Auth::id(),
                 'receiver_id' => $request->input('receiver_id'),
                 'content' => $string,
+                'media_url' => $mediaUrl,
+                'message_type' => $messageType,
             ]);
 
             // Prepare the data you want to broadcast
@@ -34,6 +56,8 @@ class MessageController extends Controller
                 'sender_id' => $message->sender_id,
                 'receiver_id' => $message->receiver_id,
                 'content' => $message->content,
+                'media_url' => $message->media_url,
+                'message_type' => $message->message_type,  // Include the message type
                 'timestamp' => $message->created_at->toDateTimeString(),
             ];
 
@@ -48,6 +72,16 @@ class MessageController extends Controller
             ], 201);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Return a custom validation error response
+            $mediaErrors = $e->errors()['media'] ?? null;
+            if ($mediaErrors) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Media validation failed.',
+                    'errors' => $mediaErrors,
+                ], 422);
+            }
+    
+            // Handle other validation errors
             return response()->json([
                 'success' => false,
                 'message' => 'Validation failed.',
@@ -108,7 +142,8 @@ class MessageController extends Controller
             $messageId = $request->input('message_id');
             $message = Message::findOrFail($messageId);
     
-            $authUserId = Auth::id();
+            // $authUserId = Auth::id();
+            $authUserId = 1;
     
             // Check if the authenticated user is the sender
             if ($message->sender_id !== $authUserId) {
@@ -116,6 +151,17 @@ class MessageController extends Controller
                     'success' => false,
                     'message' => 'Unauthorized action.',
                 ], 403);
+            }
+
+            // Check if the message has media and delete the file from the server
+            if ($message->media_url) {
+                // Extract the file path from the URL
+                $mediaPath = str_replace(asset('storage/'), '', $message->media_url);
+                
+                // Delete the media file from the public/messages folder
+                if (Storage::disk('public')->exists($mediaPath)) {
+                    Storage::disk('public')->delete($mediaPath);
+                }
             }
     
             // Delete the message

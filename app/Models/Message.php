@@ -19,6 +19,8 @@ class Message extends Model
         'receiver_id',
         'content',
         'is_read',
+        'media_url',
+        'message_type',
     ];
 
     public function sender()
