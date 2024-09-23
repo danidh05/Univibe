@@ -8,6 +8,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\Message;
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 class MessageControllerTest extends TestCase
 {
@@ -91,6 +93,113 @@ class MessageControllerTest extends TestCase
                 'content' => ['The content field must not be greater than 255 characters.']
             ],
         ]);
+    }
+
+    public function test_send_private_message_with_photo()
+    {
+        // Mock the authenticated user
+        $sender = User::factory()->create();
+        $receiver = User::factory()->create();
+
+        // Fake storage for media files
+        Storage::fake('public');
+
+        // Prepare a fake image file
+        $file = UploadedFile::fake()->image('photo.jpg');
+
+        // Act as the authenticated user
+        $response = $this->actingAs($sender)
+            ->postJson('/api/messages/send', [
+                'receiver_id' => $receiver->id,
+                'content' => 'This is a photo message.',
+                'media' => $file
+            ]);
+
+        // Assert the message was sent successfully
+        $response->assertStatus(201)
+            ->assertJson([
+                'success' => true,
+                'message' => 'Message sent successfully.',
+            ]);
+
+        // Assert the file was stored correctly
+        Storage::disk('public')->assertExists('messages/' . $file->hashName());
+
+        // Assert the message was created with the correct media type
+        $this->assertDatabaseHas('messages', [
+            'sender_id' => $sender->id,
+            'receiver_id' => $receiver->id,
+            'message_type' => 'image',
+            'media_url' => 'messages/' . $file->hashName(),
+        ]);
+    }
+
+    public function test_send_private_message_with_video()
+    {
+        // Mock the authenticated user
+        $sender = User::factory()->create();
+        $receiver = User::factory()->create();
+
+        // Fake storage for media files
+        Storage::fake('public');
+
+        // Prepare a fake video file
+        $file = UploadedFile::fake()->create('video.mp4', 1000, 'video/mp4');
+
+        // Act as the authenticated user
+        $response = $this->actingAs($sender)
+            ->postJson('/api/messages/send', [
+                'receiver_id' => $receiver->id,
+                'content' => 'This is a video message.',
+                'media' => $file
+            ]);
+
+        // Assert the message was sent successfully
+        $response->assertStatus(201)
+            ->assertJson([
+                'success' => true,
+                'message' => 'Message sent successfully.',
+            ]);
+
+        // Assert the file was stored correctly
+        Storage::disk('public')->assertExists('messages/' . $file->hashName());
+
+        // Assert the message was created with the correct media type
+        $this->assertDatabaseHas('messages', [
+            'sender_id' => $sender->id,
+            'receiver_id' => $receiver->id,
+            'message_type' => 'video',
+            'media_url' => 'messages/' . $file->hashName(),
+        ]);
+    }
+
+    public function test_send_private_message_with_invalid_media_type()
+    {
+        // Mock the authenticated user
+        $sender = User::factory()->create();
+        $receiver = User::factory()->create();
+
+        // Fake storage for media files
+        Storage::fake('public');
+
+        // Prepare a fake file with an invalid media type (e.g., PDF)
+        $file = UploadedFile::fake()->create('document.pdf', 1000, 'application/pdf');
+
+        // Act as the authenticated user
+        $response = $this->actingAs($sender)
+            ->postJson('/api/messages', [
+                'receiver_id' => $receiver->id,
+                'content' => 'This is a message with invalid media.',
+                'media' => $file
+            ]);
+
+        // Assert validation fails and returns the correct error message
+        $response->assertStatus(422)
+            ->assertJson([
+                'success' => false,
+                'message' => 'Media validation failed.',
+                'errors' => ['The media must be a file of type: jpeg, png, jpg, mp4, mov, avi.'],
+            ]);
     }
 
     public function test_get_private_messages()

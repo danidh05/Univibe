@@ -237,8 +237,8 @@ class MessageController extends Controller
             $messageId = $request->input('message_id');
             $message = Message::findOrFail($messageId);
     
-            // $authUserId = Auth::id();
-            $authUserId = 1;
+            $authUserId = Auth::id();
+            // $authUserId = 1;
     
             // Check if the authenticated user is the sender
             if ($message->sender_id !== $authUserId) {
