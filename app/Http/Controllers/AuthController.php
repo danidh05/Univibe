@@ -113,4 +113,14 @@ class AuthController extends Controller
             'error' => 'Invalid credentials',
         ], 401);
     }
+    public function logout(Request $request)
+    {
+        Auth::logout(); // Log the user out
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        return response()->json(['message' => 'Logged out successfully'], 200);
+    }
 }

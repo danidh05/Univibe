@@ -18,11 +18,12 @@ class FacultyFactory extends Factory
      *
      * @return array<string, mixed>
      */
-    public function definition(): array
+
+    public function definition()
     {
         return [
-            'faculty_name' => fake()->word(),
-            'university_id' => University::first() ?? University::factory()->create()->id,
+            'faculty_name' => $this->faker->word . ' Faculty',
+            'university_id' => University::factory(),
         ];
     }
 }

@@ -8,12 +8,15 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\SavePostController;
 use App\Http\Controllers\SharePostController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CourseController;
 use App\Http\Controllers\EmailVerficationController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\FollowsController;
 use App\Http\Controllers\FriendRequestController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\GroupMembersController;
+use App\Http\Controllers\InstructorController;
+use App\Http\Controllers\InternshipController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MessageController;
@@ -81,6 +84,27 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 });
 
+Route::controller(CourseController::class)->group(function () {
+    Route::post('/createCourse', "store");
+    Route::put('/updateCourse/{id}', "update");
+    Route::get('/showAllCourses', "index");
+    Route::get('/showSingleCourse/{id}', "show");
+    Route::delete('/delete/{id}', "destroy");
+});
+Route::controller(InternshipController::class)->group(function () {
+    Route::get('/getAllInternships', 'index');
+    Route::post('/createInternship', 'store');
+    Route::get('/internships/{id}', 'show');
+    Route::put('/Updateinternships/{id}', 'update');
+    Route::delete('/deleteinternships/{id}', 'destroy');
+});
+
+Route::controller(InstructorController::class)->group(function () {
+    Route::post('/createInstructors', 'store'); // Create instructor
+    Route::get('/instructors/{id}', 'show'); // Show specific instructor
+    Route::put('/updateInstructors/{id}', 'update'); // Update instructor
+    Route::delete('/deleteInstructors/{id}', 'destroy'); // Delete instructor
+});
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
