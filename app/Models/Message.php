@@ -21,6 +21,8 @@ class Message extends Model
         'is_read',
         'media_url',
         'message_type',
+        'is_read',
+        'is_delivered',
     ];
 
     public function sender()
