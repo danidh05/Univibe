@@ -33,8 +33,8 @@
         cluster: 'ap2'
       });
   
-      var channel = pusher.subscribe('user-2');
-      channel.bind('private-message-event', function(data) {
+      var channel = pusher.subscribe('user-1');
+      channel.bind('private-message-delivered', function(data) {
         alert(JSON.stringify(data));
       });
     </script>
