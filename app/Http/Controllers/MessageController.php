@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\MessageDelivered;
 use App\Events\PrivateMessageSent;
 use App\Models\Message;
 use Illuminate\Http\Request;
@@ -44,10 +45,13 @@ class MessageController extends Controller
     
             $message = Message::create([
                 'sender_id' => Auth::id(),
+                // 'sender_id' => 1,
                 'receiver_id' => $request->input('receiver_id'),
                 'content' => $string,
                 'media_url' => $mediaUrl,
                 'message_type' => $messageType,
+                'is_read' => false,
+                'is_delivered' => false,
             ]);
 
             // Prepare the data you want to broadcast
@@ -58,6 +62,8 @@ class MessageController extends Controller
                 'content' => $message->content,
                 'media_url' => $message->media_url,
                 'message_type' => $message->message_type,  // Include the message type
+                'is_read' => $message->is_read,
+                'is_delivered' => $message->is_delivered,
                 'timestamp' => $message->created_at->toDateTimeString(),
             ];
 
@@ -94,6 +100,95 @@ class MessageController extends Controller
                 'message' => $th->getMessage(),
             ], 500);
         }
+    }
+
+    public function readAllPrivateMessages(Request $request){
+        try {
+            $request->validate([
+                'user_id' => 'required|exists:users,id',
+            ]);
+
+            // Fetch and update the messages where sender_id is the user_id
+            // and receiver_id is the authenticated user's ID
+            $updatedMessages = Message::where('sender_id', $request->user_id)
+            ->where('receiver_id', Auth::id())
+            ->where('is_read', false)
+            ->update([
+                'is_read' => true,
+                'is_delivered' => true,
+            ]);
+
+            $user = User::find($request->user_id);
+
+            $pusher_data = [
+                'receiver_id' => Auth::id(),
+                'read_all_messages' => true,
+            ];
+
+            // Dispatch the event
+            $pusher_channel = $user->pusher_channel;
+            event(new PrivateMessageSent($pusher_data, $pusher_channel));
+
+            // Check if any messages were updated
+            if ($updatedMessages > 0) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Messages updated successfully.',
+                ], 200);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No messages found to update.',
+                ], 404);
+            }
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Return a custom validation error response
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed.',
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (\Throwable $th) {
+            // Return a generic error response
+            return response()->json([
+                'success' => false,
+                'message' => $th->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function markAsDelivered(Request $request)
+    {
+        $request->validate([
+            'message_id' => 'required|exists:messages,id',
+        ]);
+
+        $message = Message::find($request->input('message_id'));
+        
+        // Ensure that the receiver is the one marking the message as delivered
+        if ($message->receiver_id != Auth::id()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized action.',
+            ], 403);
+        }
+
+        $message->is_delivered = true;
+        $message->save();
+
+        $pusher_data = [
+            'updated_message' => $message,
+        ];
+
+        // Dispatch the event
+        $pusher_channel = $message->sender->pusher_channel;
+        event(new MessageDelivered($pusher_data, $pusher_channel));
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Message marked as delivered.',
+            'data' => $message,
+        ], 200);
     }
 
     public function getPrivateMessages($user_id){
