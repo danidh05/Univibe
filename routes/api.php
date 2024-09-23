@@ -74,6 +74,8 @@ Route::post('/login', [AuthController::class, 'login']);
 
 // Ralph
 Route::post('/messages/send', [MessageController::class, 'sendPrivateMessage']);
+Route::post('/messages/read_all_private_messages', [MessageController::class, 'readAllPrivateMessages']);
+Route::post('/messages/mark_message_delivered', [MessageController::class, 'markAsDelivered']);
 Route::get('/messages/get/{user_id}', [MessageController::class, 'getPrivateMessages']);
 Route::put('/messages/update', [MessageController::class, 'updatePrivateMessage']);
 Route::delete('/messages/delete', [MessageController::class, 'deletePrivateMessage']);
