@@ -12,6 +12,7 @@ use App\Http\Controllers\GroupController;
 use App\Http\Middleware\CheckGroupMember;
 use App\Http\Middleware\UserIdValidation;
 use App\Http\Controllers\RepostController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FollowsController;
 use App\Http\Controllers\MessageController;
@@ -61,6 +62,9 @@ Route::get('/posts/{postId}/copy-link', [SharePostController::class, 'copyLink']
 // {{ Repost }}
 Route::post('/posts/{id}/repost', [RepostController::class, 'repost'])->middleware('auth');
 Route::delete('/posts/{id}/repost', [RepostController::class, 'deleteRepost'])->middleware('auth');
+
+//{{ Search }}
+Route::get('/search', [SearchController::class, 'search']);
 
 
 // Ahmed
