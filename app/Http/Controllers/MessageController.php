@@ -14,6 +14,27 @@ use Illuminate\Support\Facades\Storage;
 
 class MessageController extends Controller
 {
+    /**
+     * @OA\PathItem(
+     *     path="/messages/send",
+     *     @OA\Post(
+     *         summary="Send a private message",
+     *         tags={"Private Message"},
+     *         @OA\RequestBody(
+     *             required=true,
+     *             @OA\JsonContent(
+     *                 type="object",
+     *                 @OA\Property(property="receiver_id", type="integer", example=2, description="The ID of the user receiving the message"),
+     *                 @OA\Property(property="content", type="string", example="Hello, how are you?", description="The content of the message"),
+     *                 @OA\Property(property="media", type="string", format="binary", description="Optional media file to send with the message")
+     *             )
+     *         ),
+     *         @OA\Response(response=200, description="Successful operation"),
+     *         @OA\Response(response=422, description="Validation failed"),
+     *         @OA\Response(response=500, description="Server failure")
+     *     )
+     * )
+     */
     public function sendPrivateMessage(Request $request){
         try {
             $request->validate([
@@ -75,7 +96,7 @@ class MessageController extends Controller
                 'success' => true,
                 'message' => 'Message sent successfully.',
                 'data' => $message,
-            ], 201);
+            ], 200);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Return a custom validation error response
             $mediaErrors = $e->errors()['media'] ?? null;
@@ -102,6 +123,26 @@ class MessageController extends Controller
         }
     }
 
+    /**
+     * @OA\PathItem(
+     *     path="/messages/read_all_private_messages",
+     *     @OA\Post(
+     *         summary="Mark all the messages between you and another user as read",
+     *         tags={"Private Message"},
+     *         @OA\RequestBody(
+     *             required=true,
+     *             @OA\JsonContent(
+     *                 type="object",
+     *                 @OA\Property(property="user_id", type="integer", example=2, description="The ID of the user whose messages are to be marked as read")
+     *             )
+     *         ),
+     *         @OA\Response(response=200, description="Successful operation"),
+     *         @OA\Response(response=422, description="Validation failed"),
+     *         @OA\Response(response=404, description="No messages found to update"),
+     *         @OA\Response(response=500, description="Server failure")
+     *     )
+     * )
+     */
     public function readAllPrivateMessages(Request $request){
         try {
             $request->validate([
@@ -157,40 +198,86 @@ class MessageController extends Controller
         }
     }
 
+    /**
+     * @OA\PathItem(
+     *     path="/messages/mark_message_delivered",
+     *     @OA\Post(
+     *         summary="Mark a message of yours as delivered",
+     *         tags={"Private Message"},
+     *         @OA\RequestBody(
+     *             required=true,
+     *             @OA\JsonContent(
+     *                 type="object",
+     *                 @OA\Property(property="message_id", type="integer", example=1, description="The ID of the message to be marked as delivered")
+     *             )
+     *         ),
+     *         @OA\Response(response=200, description="Successful operation"),
+     *         @OA\Response(response=403, description="Unauthorized action"),
+     *         @OA\Response(response=500, description="Server failure")
+     *     )
+     * )
+     */
     public function markAsDelivered(Request $request)
     {
-        $request->validate([
-            'message_id' => 'required|exists:messages,id',
-        ]);
-
-        $message = Message::find($request->input('message_id'));
-        
-        // Ensure that the receiver is the one marking the message as delivered
-        if ($message->receiver_id != Auth::id()) {
+        try {
+            $request->validate([
+                'message_id' => 'required|exists:messages,id',
+            ]);
+    
+            $message = Message::find($request->input('message_id'));
+            
+            // Ensure that the receiver is the one marking the message as delivered
+            if ($message->receiver_id != Auth::id()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized action.',
+                ], 403);
+            }
+    
+            $message->is_delivered = true;
+            $message->save();
+    
+            $pusher_data = [
+                'updated_message' => $message,
+            ];
+    
+            // Dispatch the event
+            $pusher_channel = $message->sender->pusher_channel;
+            event(new MessageDelivered($pusher_data, $pusher_channel));
+    
+            return response()->json([
+                'success' => true,
+                'message' => 'Message marked as delivered.',
+                'data' => $message,
+            ], 200);
+        } catch (\Throwable $th) {
+            // Return a generic error response
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized action.',
-            ], 403);
-        }
-
-        $message->is_delivered = true;
-        $message->save();
-
-        $pusher_data = [
-            'updated_message' => $message,
-        ];
-
-        // Dispatch the event
-        $pusher_channel = $message->sender->pusher_channel;
-        event(new MessageDelivered($pusher_data, $pusher_channel));
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Message marked as delivered.',
-            'data' => $message,
-        ], 200);
+                'message' => $th->getMessage(),
+            ], 500);
+        }   
     }
 
+    /**
+     * @OA\PathItem(
+     *     path="/messages/get/{user_id}",
+     *     @OA\Get(
+     *         summary="Retrieve all messages between the authenticated user and a specified user",
+     *         tags={"Private Message"},
+     *         @OA\Parameter(
+     *             name="user_id",
+     *             in="path",
+     *             required=true,
+     *             description="The ID of the user to retrieve messages with",
+     *             @OA\Schema(type="integer", example=2)
+     *         ),
+     *         @OA\Response(response=200, description="Successful operation"),
+     *         @OA\Response(response=404, description="User not found"),
+     *         @OA\Response(response=500, description="Server failure")
+     *     )
+     * )
+     */
     public function getPrivateMessages($user_id){
         try {
             $user = User::findOrFail($user_id);
@@ -212,7 +299,7 @@ class MessageController extends Controller
             return response()->json([
                 'success' => true,
                 'data' => $messages,
-            ]);
+            ], 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             // User not found
             return response()->json([
@@ -228,6 +315,26 @@ class MessageController extends Controller
         }
     }
 
+    /**
+     * @OA\PathItem(
+     *     path="/messages/delete",
+     *     @OA\Delete(
+     *         summary="Delete a private message",
+     *         tags={"Private Message"},
+     *         @OA\RequestBody(
+     *             required=true,
+     *             @OA\JsonContent(
+     *                 type="object",
+     *                 @OA\Property(property="message_id", type="integer", example=1, description="The ID of the message to be deleted")
+     *             )
+     *         ),
+     *         @OA\Response(response=200, description="Successful operation"),
+     *         @OA\Response(response=403, description="Unauthorized action"),
+     *         @OA\Response(response=422, description="Validation failed"),
+     *         @OA\Response(response=500, description="Server failure")
+     *     )
+     * )
+     */
     public function deletePrivateMessage(Request $request){
         try {
             $request->validate([
@@ -265,7 +372,14 @@ class MessageController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Message deleted successfully.',
-            ]);
+            ], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Return a custom validation error response
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed.',
+                'errors' => $e->errors(),
+            ], 422);
         } catch (\Throwable $th) {
             return response()->json([
                 'success' => false,
@@ -274,6 +388,25 @@ class MessageController extends Controller
         }
     }
 
+    /**
+     * @OA\Put(
+     *     path="/messages/update",
+     *     summary="Update a message",
+     *     tags={"Private Message"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message_id", type="integer", example=1, description="The ID of the message to be updated"),
+     *             @OA\Property(property="content", type="string", example="Updated message content", description="The new content of the message")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Successful operation"),
+     *     @OA\Response(response=403, description="Unauthorized action"),
+     *     @OA\Response(response=422, description="Validation failed"),
+     *     @OA\Response(response=500, description="Server failure")
+     * )
+     */
     public function updatePrivateMessage(Request $request)
     {
         try {
@@ -304,7 +437,7 @@ class MessageController extends Controller
                 'success' => true,
                 'message' => 'Message updated successfully.',
                 'data' => $message,
-            ]);
+            ], 200);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Return a custom validation error response
             return response()->json([

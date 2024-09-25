@@ -10,6 +10,26 @@ use Illuminate\Support\Facades\Storage;
 
 class GroupController extends Controller
 {
+    /**
+     * @OA\PathItem(
+     *     path="/groups/create",
+     *     @OA\Post(
+     *         summary="Create a group",
+     *         tags={"Group Chat"},
+     *         @OA\RequestBody(
+     *             required=true,
+     *             @OA\JsonContent(
+     *                 type="object",
+     *                 @OA\Property(property="name", type="string", example="My Group", description="The name of the group"),
+     *                 @OA\Property(property="photo", type="string", format="binary", description="Optional group photo (jpeg, png, jpg)")
+     *             )
+     *         ),
+     *         @OA\Response(response=200, description="Successful operation"),
+     *         @OA\Response(response=422, description="Validation failed"),
+     *         @OA\Response(response=500, description="Server failure")
+     *     )
+     * )
+     */
     public function createGroup(Request $request){
         try {
             $request->validate([
@@ -30,7 +50,7 @@ class GroupController extends Controller
                 'success' => true,
                 'message' => 'Group created successfully!',
                 'group' => $group
-            ], 201);
+            ], 200);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Return a custom validation error response
             return response()->json([
@@ -47,6 +67,18 @@ class GroupController extends Controller
         }
     }
 
+    /**
+     * @OA\PathItem(
+     *     path="/groups/get",
+     *     @OA\Get(
+     *         summary="Gets all the group chats you are in",
+     *         tags={"Group Chat"},
+     *         @OA\Response(response=200, description="Successful operation"),
+     *         @OA\Response(response=422, description="Validation failed"),
+     *         @OA\Response(response=500, description="Server failure")
+     *     )
+     * )
+     */
     public function getMyGroups(){
         try {
             $userId = Auth::id();
@@ -58,7 +90,7 @@ class GroupController extends Controller
             return response()->json([
                 'success' => true,
                 'groups' => $groups
-            ]);
+            ], 200);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Return a custom validation error response
             return response()->json([
@@ -75,6 +107,26 @@ class GroupController extends Controller
         }
     }
 
+    /**
+     * @OA\PathItem(
+     *     path="/groups/update/name",
+     *     @OA\Put(
+     *         summary="Updates the name of the group chat",
+     *         tags={"Group Chat"},
+     *         @OA\Response(response=200, description="Successful operation"),
+     *         @OA\Response(response=422, description="Validation failed"),
+     *         @OA\Response(response=500, description="Server failure"),
+     *         @OA\RequestBody(
+     *             required=true,
+     *             @OA\JsonContent(
+     *                 required={"name", "group_chat_id"},
+     *                 @OA\Property(property="name", type="string", example="New Group Name"),
+     *                 @OA\Property(property="group_chat_id", type="integer", example=1)
+     *             )
+     *         )
+     *     )
+     * )
+     */
     public function updateGroupName(Request $request){
         try {
             $request->validate([
@@ -90,7 +142,7 @@ class GroupController extends Controller
                 'success' => true,
                 'message' => 'Group name updated successfully.',
                 'group' => $groupChat
-            ]);
+            ], 200);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Return a custom validation error response
             return response()->json([
@@ -107,6 +159,26 @@ class GroupController extends Controller
         }
     }
 
+    /**
+     * @OA\PathItem(
+     *     path="/groups/update/photo",
+     *     @OA\Put(
+     *         summary="Updates the photo of the group chat",
+     *         tags={"Group Chat"},
+     *         @OA\Response(response=200, description="Successful operation"),
+     *         @OA\Response(response=422, description="Validation failed"),
+     *         @OA\Response(response=500, description="Server failure"),
+     *         @OA\RequestBody(
+     *             required=true,
+     *             @OA\JsonContent(
+     *                 required={"photo", "group_chat_id"},
+     *                 @OA\Property(property="photo", type="string", format="binary"),
+     *                 @OA\Property(property="group_chat_id", type="integer", example=1)
+     *             )
+     *         )
+     *     )
+     * )
+     */
     public function updateGroupPhoto(Request $request)
     {
         try {
@@ -137,7 +209,7 @@ class GroupController extends Controller
                 'success' => true,
                 'message' => 'Group photo updated successfully.',
                 'group' => $groupChat
-            ]);
+            ], 200);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Return a custom validation error response
             return response()->json([
@@ -154,6 +226,24 @@ class GroupController extends Controller
         }
     }
 
+    /**
+     * @OA\PathItem(
+     *     path="/groups/delete",
+     *     @OA\Delete(
+     *         summary="Deletes a group chat",
+     *         tags={"Group Chat"},
+     *         @OA\Response(response=200, description="Successful operation"),
+     *         @OA\Response(response=500, description="Server failure"),
+     *         @OA\RequestBody(
+     *             required=true,
+     *             @OA\JsonContent(
+     *                 required={"group_chat_id"},
+     *                 @OA\Property(property="group_chat_id", type="integer", example=1)
+     *             )
+     *         )
+     *     )
+     * )
+     */
     public function deleteGroup(Request $request){
         try {
             $groupChat = GroupChat::find($request->input('group_chat_id'));
@@ -164,7 +254,7 @@ class GroupController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Group chat deleted successfully.',
-            ]);
+            ], 200);
         } catch (\Throwable $th) {
             // Return a generic error response
             return response()->json([

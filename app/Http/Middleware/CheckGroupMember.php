@@ -30,7 +30,6 @@ class CheckGroupMember
                 'errors' => $e->errors(),
             ], 422);
         }
-        // check if the auth user and the owner of the group are the same
         $groupChat = GroupChat::find($request->input('group_chat_id'));
         // Check if the user is a member of the group
         $isMember = $groupChat->members()->where('user_id', Auth::id())->exists();
@@ -39,7 +38,7 @@ class CheckGroupMember
             return response()->json([
                 'success' => false,
                 'message' => 'User is not a member of this group.'
-            ], 410); // 410 if the resource has already been deleted
+            ], 404);
         }
 
         return $next($request);
