@@ -21,7 +21,7 @@ class UniversityFactory extends Factory
     {
         return [
             'university_name' => fake()->company(),
-            'Location' => fake()->city(),
+            'location' => fake()->city(),
         ];
     }
 }
