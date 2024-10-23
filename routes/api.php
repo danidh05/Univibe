@@ -23,6 +23,8 @@ use App\Http\Controllers\GroupMembersController;
 use App\Http\Controllers\FriendRequestController;
 use App\Http\Controllers\EmailVerficationController;
 
+
+
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');

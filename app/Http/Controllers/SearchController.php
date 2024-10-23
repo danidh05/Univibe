@@ -44,7 +44,7 @@ class SearchController extends Controller
 
         } catch (\Exception $e) {
             // Log the error for debugging purposes
-            \Log::error('Search query failed: ' . $e->getMessage());
+            // Log::error('Search query failed: ' . $e->getMessage());
 
             // Return a JSON response with a generic error message
             return response()->json(['error' => $e->getMessage()], 500);
