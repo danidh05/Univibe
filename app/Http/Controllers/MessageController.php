@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\AllMessagesRead;
 use App\Events\MessageDelivered;
 use App\Events\PrivateMessageSent;
 use App\Models\Message;
@@ -168,7 +169,7 @@ class MessageController extends Controller
 
             // Dispatch the event
             $pusher_channel = $user->pusher_channel;
-            event(new PrivateMessageSent($pusher_data, $pusher_channel));
+            event(new AllMessagesRead($pusher_data, $pusher_channel));
 
             // Check if any messages were updated
             if ($updatedMessages > 0) {
