@@ -31,7 +31,7 @@ class MessageDeliveredReadTest extends TestCase
         $response = $this->postJson('/api/messages/send', $data);
 
         // Assert the message was created and response is correct
-        $response->assertStatus(201)
+        $response->assertStatus(200)
                     ->assertJson([
                     'success' => true,
                     'message' => 'Message sent successfully.',

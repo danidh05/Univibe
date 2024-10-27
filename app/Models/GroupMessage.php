@@ -9,6 +9,8 @@ class GroupMessage extends Model
 {
     use HasFactory;
 
+    protected $table = 'group_chat_messages';
+
     /**
      * The attributes that are mass assignable.
      *

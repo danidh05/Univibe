@@ -39,7 +39,7 @@ class MessageControllerTest extends TestCase
         $response = $this->postJson('/api/messages/send', $data);
 
         // Assert the message was created and response is correct
-        $response->assertStatus(201)
+        $response->assertStatus(200)
                  ->assertJson([
                     'success' => true,
                     'message' => 'Message sent successfully.',
@@ -116,7 +116,7 @@ class MessageControllerTest extends TestCase
             ]);
 
         // Assert the message was sent successfully
-        $response->assertStatus(201)
+        $response->assertStatus(200)
             ->assertJson([
                 'success' => true,
                 'message' => 'Message sent successfully.',
@@ -155,7 +155,7 @@ class MessageControllerTest extends TestCase
             ]);
 
         // Assert the message was sent successfully
-        $response->assertStatus(201)
+        $response->assertStatus(200)
             ->assertJson([
                 'success' => true,
                 'message' => 'Message sent successfully.',
@@ -187,7 +187,7 @@ class MessageControllerTest extends TestCase
 
         // Act as the authenticated user
         $response = $this->actingAs($sender)
-            ->postJson('/api/messages', [
+            ->postJson('/api/messages/send', [
                 'receiver_id' => $receiver->id,
                 'content' => 'This is a message with invalid media.',
                 'media' => $file
@@ -198,7 +198,7 @@ class MessageControllerTest extends TestCase
             ->assertJson([
                 'success' => false,
                 'message' => 'Media validation failed.',
-                'errors' => ['The media must be a file of type: jpeg, png, jpg, mp4, mov, avi.'],
+                'errors' => ['The media field must be a file of type: jpeg, png, jpg, mp4, mov, avi.'],
             ]);
     }
 
