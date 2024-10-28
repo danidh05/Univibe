@@ -16,12 +16,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        User::factory(10)->create();
 
-        // $this->call(UnivristySeeder::class);
-        // University::factory(5)->create();
-        // Instructor::factory(10)->create();
-        // Course::factory(20)->create();
+        $this->call(UnivristySeeder::class);
+        University::factory(5)->create();
+        Instructor::factory(10)->create();
+        Course::factory(20)->create();
         $this->call(InternshipSeeder::class);
     }
 }

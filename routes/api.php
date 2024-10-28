@@ -73,30 +73,31 @@ Route::middleware('auth:sanctum')->group(function () {
     });
     Route::middleware('userAdmin')->group(function () {
         Route::controller(AdminController::class)->group(function () {
-            Route::post('/createAboutUsTitle', "createAboutUsTitle");
-            Route::post('/createAboutUsDetail/{id}', "createAboutUsDetail");
+            Route::post('/about-us/titles', 'createAboutUsTitle'); // Changed to a more RESTful format
+            Route::post('/about-us/{aboutUsId}/details', 'createAboutUsDetail'); // Changed to a more RESTful format
 
-            Route::get('/getAllAboutUsWithDetails', "getAllAboutUsWithDetails");
-            Route::get('/getsingleAboutUsWithDetails/{id}', "getsingleAboutUsWithDetails");
-            Route::put('/updateAboutUs/{id}', "updateAboutUs"); // Add this line
-            Route::put('/updateAboutUsDetail/{id}', "updateAboutUsDetail");
+            Route::get('/about-us', 'getAllAboutUsWithDetails'); // Changed to a more RESTful format
+            Route::get('/about-us/{aboutUsId}', 'getsingleAboutUsWithDetails'); // Changed to a more RESTful format
+            Route::put('/about-us/{aboutUsId}', 'updateAboutUs'); // Updated parameter name for consistency
+            Route::put('/about-us/{aboutUsId}/details', 'updateAboutUsDetail'); // Updated parameter name for consistency
         });
     });
 });
 
 Route::controller(CourseController::class)->group(function () {
-    Route::post('/createCourse', "store");
-    Route::put('/updateCourse/{id}', "update");
-    Route::get('/showAllCourses', "index");
-    Route::get('/showSingleCourse/{id}', "show");
-    Route::delete('/delete/{id}', "destroy");
+    Route::post('/courses', "store"); // Create a new course
+    Route::put('/courses/{id}', "update"); // Update an existing course
+    Route::get('/courses', "index"); // Show all courses
+    Route::get('/courses/{id}', "show"); // Show a single course
+    Route::delete('/courses/{id}', "destroy"); // Delete a course
 });
+
 Route::controller(InternshipController::class)->group(function () {
-    Route::get('/getAllInternships', 'index');
-    Route::post('/createInternship', 'store');
-    Route::get('/internships/{id}', 'show');
-    Route::put('/Updateinternships/{id}', 'update');
-    Route::delete('/deleteinternships/{id}', 'destroy');
+    Route::get('/internships', 'index'); // Get all internships
+    Route::post('/internships', 'store'); // Create a new internship
+    Route::get('/internships/{id}', 'show'); // Get a single internship by ID
+    Route::put('/internships/{id}', 'update'); // Update an internship by ID
+    Route::delete('/internships/{id}', 'destroy'); // Delete an internship by ID
 });
 
 Route::controller(InstructorController::class)->group(function () {
