@@ -15,14 +15,294 @@
         }
     ],
     "paths": {
-        "/api/posts/{post}": {
+        "/show_comment/{postId}": {
+            "get": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Get Comments on a Post",
+                "description": "Retrieve all comments on a specific post.",
+                "operationId": "7e7b95f02ace38c905ed26be9d5e1d45",
+                "parameters": [
+                    {
+                        "name": "postId",
+                        "in": "path",
+                        "description": "ID of the post to retrieve comments for",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved comments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Comment"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Post not found"
+                    }
+                }
+            }
+        },
+        "/add_comment/{postId}": {
+            "post": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Add a Comment to a Post",
+                "description": "Add a new comment to a specific post. Sends a notification to the post owner.",
+                "operationId": "159fc40c709416052f407cb34889e035",
+                "parameters": [
+                    {
+                        "name": "postId",
+                        "in": "path",
+                        "description": "ID of the post to comment on",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "content": {
+                                        "description": "Content of the comment",
+                                        "type": "string",
+                                        "example": "This is a comment."
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Comment added successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Comment"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Post not found"
+                    },
+                    "500": {
+                        "description": "Failed to add comment"
+                    }
+                }
+            }
+        },
+        "/update_comment/{commentId}": {
+            "put": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Update a Comment",
+                "description": "Edit an existing comment. Only the original commenter can edit.",
+                "operationId": "12077b0e317759c2c92ff6c97c1c9897",
+                "parameters": [
+                    {
+                        "name": "commentId",
+                        "in": "path",
+                        "description": "ID of the comment to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "content": {
+                                        "description": "Updated content of the comment",
+                                        "type": "string",
+                                        "example": "This is an updated comment."
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Comment updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Comment"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Comment not found or unauthorized"
+                    },
+                    "500": {
+                        "description": "Failed to update comment"
+                    }
+                }
+            }
+        },
+        "/delete_comment/{commentId}": {
+            "delete": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Delete a Comment",
+                "description": "Delete an existing comment. Only the original commenter can delete.",
+                "operationId": "07b170e47e60ac93d50c9a3b867060b4",
+                "parameters": [
+                    {
+                        "name": "commentId",
+                        "in": "path",
+                        "description": "ID of the comment to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Comment deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Comment deleted successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "403": {
+                        "description": "Comment not found or unauthorized"
+                    },
+                    "500": {
+                        "description": "Failed to delete comment"
+                    }
+                }
+            }
+        },
+        "/like_post/{postId}": {
+            "post": {
+                "tags": [
+                    "Likes"
+                ],
+                "summary": "Like or Dislike a Post",
+                "description": "Allows a user to like a post. If the post is already liked by the user, it will be disliked (unliked) instead. Also sends a notification to the post owner if liked.",
+                "operationId": "b4c9593f6fcb30c55dda67471071314e",
+                "parameters": [
+                    {
+                        "name": "postId",
+                        "in": "path",
+                        "description": "ID of the post to like or dislike",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully liked or disliked the post",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Post Liked and Notification Sent"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Post not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Post not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to like/dislike post",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Failed to like/dislike post"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "An error message"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/posts/{post}": {
             "get": {
                 "tags": [
                     "Posts"
                 ],
                 "summary": "Get a single post",
                 "description": "Retrieve details of a single post by its ID",
-                "operationId": "d3910995cb542d02254c9fc6133cc10c",
+                "operationId": "19d7b55d7d5efd7bc27ed7c01d74ca95",
                 "parameters": [
                     {
                         "name": "post",
@@ -84,23 +364,25 @@
                 }
             }
         },
-        "/api/add_post": {
+        "/add_post": {
             "post": {
                 "tags": [
                     "Posts"
                 ],
                 "summary": "Create a new post",
-                "description": "Create a new post and optionally add poll options if the post is a poll",
-                "operationId": "144d1b0771351344843c2ef1c47836a0",
+                "description": "Create a new post and optionally add poll options if the postType is 'poll'. The 'poll_options' field is only required and enabled when 'postType' is 'poll'.",
+                "operationId": "4a04abeeaa923552bef8a30a223dc2a4",
                 "requestBody": {
                     "description": "Post object that needs to be added",
                     "required": true,
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
                                 "required": [
                                     "title",
-                                    "content"
+                                    "content",
+                                    "postType",
+                                    "user_id"
                                 ],
                                 "properties": {
                                     "title": {
@@ -114,22 +396,41 @@
                                         "example": "This is the content of the post."
                                     },
                                     "postType": {
-                                        "description": "The type of post (e.g., poll, normal)",
+                                        "description": "The type of post (e.g., text, image, video, poll). If 'poll', you need to provide poll options.",
                                         "type": "string",
+                                        "enum": [
+                                            "text",
+                                            "image",
+                                            "video",
+                                            "poll"
+                                        ],
                                         "example": "poll"
                                     },
-                                    "poll": {
-                                        "description": "Poll details, if postType is 'poll'",
-                                        "properties": {
-                                            "options": {
-                                                "description": "Options for the poll",
-                                                "type": "array",
-                                                "items": {
-                                                    "type": "string"
-                                                }
-                                            }
+                                    "poll_options": {
+                                        "description": "Options for the poll. Only required if 'postType' is 'poll'.",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
                                         },
-                                        "type": "object"
+                                        "example": [
+                                            "Option 1",
+                                            "Option 2"
+                                        ]
+                                    },
+                                    "user_id": {
+                                        "description": "ID of the user creating the post.",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "image": {
+                                        "description": "Image file for the post if postType is 'image'.",
+                                        "type": "file",
+                                        "format": "binary"
+                                    },
+                                    "video": {
+                                        "description": "Video file for the post if postType is 'video'.",
+                                        "type": "file",
+                                        "format": "binary"
                                     }
                                 },
                                 "type": "object"
@@ -154,14 +455,14 @@
                 }
             }
         },
-        "/api/show_user_post/{id}": {
+        "/show_user_post/{id}": {
             "get": {
                 "tags": [
                     "Posts"
                 ],
                 "summary": "Get posts by user",
                 "description": "Retrieve all posts made by a specific user",
-                "operationId": "2a5bfe534238de13f95a8fbf9da0ff93",
+                "operationId": "5b841f0f9aba66ae8963d18620750943",
                 "parameters": [
                     {
                         "name": "id",
@@ -183,14 +484,14 @@
                 }
             }
         },
-        "/api/update_post/{id}": {
+        "/update_post/{id}": {
             "put": {
                 "tags": [
                     "Posts"
                 ],
                 "summary": "Update a post",
                 "description": "Update an existing post and optionally update poll options if it's a poll",
-                "operationId": "3c2fe20b1cacafae55bcc7936cf77af8",
+                "operationId": "211ac421c31ca8e9a5841367086f7a9a",
                 "parameters": [
                     {
                         "name": "id",
@@ -254,14 +555,14 @@
                 }
             }
         },
-        "/api/delete_post/{id}": {
+        "/delete_post/{id}": {
             "delete": {
                 "tags": [
                     "Posts"
                 ],
                 "summary": "Delete a post",
                 "description": "Delete an existing post by its ID",
-                "operationId": "c6d37d931df9ab4a3e508c5c95912919",
+                "operationId": "aad6523f176738062eef27bf8198e89b",
                 "parameters": [
                     {
                         "name": "id",
@@ -285,10 +586,740 @@
                     }
                 }
             }
+        },
+        "/posts/{id}/repost": {
+            "post": {
+                "tags": [
+                    "Repost"
+                ],
+                "summary": "Repost a post",
+                "description": "Allows the authenticated user to repost a specific post. The user cannot repost their own post or repost the same post more than once.",
+                "operationId": "55a98752be5182d3db95ae19688418bf",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the post to repost",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Post reposted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Post reposted successfully"
+                                        },
+                                        "original_post": {
+                                            "$ref": "#/components/schemas/Post"
+                                        },
+                                        "original_poster": {
+                                            "$ref": "#/components/schemas/User"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "User cannot repost their own post",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "You cannot repost your own post"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Post not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Post not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Duplicate repost",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "You have already reposted this post"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "An unexpected error occurred."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Repost"
+                ],
+                "summary": "Delete a repost",
+                "description": "Allows the authenticated user to delete their repost of a specific post.",
+                "operationId": "c65d853f5f7c44101c16a251121e15ac",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the post to remove repost",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Repost deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Repost deleted successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Repost not found or not authorized to delete",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Repost not found or not authorized to delete"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "An unexpected error occurred."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/save_post/{postId}": {
+            "post": {
+                "tags": [
+                    "SavedPosts"
+                ],
+                "summary": "Save a post",
+                "description": "Save a post to the user's saved posts list",
+                "operationId": "6d4127027b419921decdc69b041a8d53",
+                "parameters": [
+                    {
+                        "name": "postId",
+                        "in": "path",
+                        "description": "ID of the post to save",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Post saved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Post saved successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to save post",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error message"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/get_save_post": {
+            "get": {
+                "tags": [
+                    "SavedPosts"
+                ],
+                "summary": "Get all saved posts",
+                "description": "Retrieve all posts saved by the authenticated user",
+                "operationId": "22b489a22003fb5af497298cc0228571",
+                "responses": {
+                    "200": {
+                        "description": "List of saved posts",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/SavePost"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to retrieve saved posts",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error message"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/delete_save_post/{postId}": {
+            "delete": {
+                "tags": [
+                    "SavedPosts"
+                ],
+                "summary": "Delete a saved post",
+                "description": "Remove a post from the user's saved posts list",
+                "operationId": "30b271f1e996ce44a44f610e98e1606e",
+                "parameters": [
+                    {
+                        "name": "postId",
+                        "in": "path",
+                        "description": "ID of the post to delete from saved posts",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Post deleted from saved list successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Post deleted from saved list successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Post not found in saved list",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Post not found in saved list"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to delete saved post",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error message"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/search": {
+            "get": {
+                "tags": [
+                    "Search"
+                ],
+                "summary": "Search across users, majors, and universities",
+                "description": "Allows users to search by a term across multiple resources, including users by username or bio, majors by name, and universities by name or location.",
+                "operationId": "4724040b63b941e77f510ebfaf0d95a1",
+                "parameters": [
+                    {
+                        "name": "query",
+                        "in": "query",
+                        "description": "Search term used to query users, majors, and universities",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "engineering"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful search results",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "users": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "username": {
+                                                        "type": "string",
+                                                        "example": "johndoe"
+                                                    },
+                                                    "bio": {
+                                                        "type": "string",
+                                                        "example": "Avid reader and nature enthusiast."
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2022-01-01T12:00:00Z"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2022-01-02T12:00:00Z"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "majors": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "major_name": {
+                                                        "type": "string",
+                                                        "example": "Computer Science"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2022-01-01T12:00:00Z"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2022-01-02T12:00:00Z"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "universities": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "university_name": {
+                                                        "type": "string",
+                                                        "example": "Harvard University"
+                                                    },
+                                                    "location": {
+                                                        "type": "string",
+                                                        "example": "Cambridge, MA"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2022-01-01T12:00:00Z"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2022-01-02T12:00:00Z"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "No Data Found - No search term provided",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "No Data Found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "An error occurred while processing your request."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/posts/{postId}/share-user": {
+            "post": {
+                "tags": [
+                    "SharePost"
+                ],
+                "summary": "Share a post with specific users",
+                "description": "Allows the authenticated user to share a post with specific users, to a feed, or by generating a link.",
+                "operationId": "ab86d4ae8c4ab4d50b151061b76430fb",
+                "parameters": [
+                    {
+                        "name": "postId",
+                        "in": "path",
+                        "description": "ID of the post to share",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "recipient_id": {
+                                        "description": "Array of recipient user IDs for sharing with specific users",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "share_type": {
+                                        "description": "The type of share (user, feed, or link)",
+                                        "type": "string",
+                                        "enum": [
+                                            "user",
+                                            "feed",
+                                            "link"
+                                        ],
+                                        "example": "user"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Post shared successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Post shared successfully."
+                                        },
+                                        "post_link": {
+                                            "type": "string",
+                                            "example": "http://example.com/posts/1"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Post not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Post not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "An unexpected error occurred."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/posts/{postId}/copy-link": {
+            "get": {
+                "tags": [
+                    "SharePost"
+                ],
+                "summary": "Copy the link of a post",
+                "description": "Generates a shareable link for a specific post.",
+                "operationId": "d306295257ddf962f3a6cc6df661c2b0",
+                "parameters": [
+                    {
+                        "name": "postId",
+                        "in": "path",
+                        "description": "ID of the post to generate a link for",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Link generated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Post link generated successfully."
+                                        },
+                                        "post_link": {
+                                            "type": "string",
+                                            "example": "http://example.com/posts/1"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Post not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Post not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "An error occurred while generating the post link"
+                                        },
+                                        "details": {
+                                            "type": "string",
+                                            "example": "Detailed error message"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
         "schemas": {
+            "Comment": {
+                "title": "Comment",
+                "description": "A comment made on a post",
+                "properties": {
+                    "id": {
+                        "description": "Unique identifier for the comment",
+                        "type": "integer"
+                    },
+                    "post_id": {
+                        "description": "ID of the post the comment belongs to",
+                        "type": "integer"
+                    },
+                    "user_id": {
+                        "description": "ID of the user who made the comment",
+                        "type": "integer"
+                    },
+                    "content": {
+                        "description": "Content of the comment",
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "description": "Date and time when the comment was created",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "description": "Date and time when the comment was last updated",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
             "Post": {
                 "title": "Post",
                 "description": "A model representing a blog post",
@@ -325,6 +1356,65 @@
                     }
                 },
                 "type": "object"
+            },
+            "User": {
+                "title": "User",
+                "description": "User model",
+                "properties": {
+                    "id": {
+                        "description": "ID of the user",
+                        "type": "integer"
+                    },
+                    "name": {
+                        "description": "Name of the user",
+                        "type": "string"
+                    },
+                    "email": {
+                        "description": "Email of the user",
+                        "type": "string",
+                        "format": "email"
+                    },
+                    "created_at": {
+                        "description": "Timestamp when the user was created",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "description": "Timestamp when the user was last updated",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "SavePost": {
+                "title": "SavePost",
+                "description": "A saved post by the user",
+                "properties": {
+                    "id": {
+                        "description": "Unique identifier of the saved post",
+                        "type": "integer"
+                    },
+                    "post_id": {
+                        "description": "ID of the original post",
+                        "type": "integer"
+                    },
+                    "user_id": {
+                        "description": "ID of the user who saved the post",
+                        "type": "integer"
+                    },
+                    "created_at": {
+                        "description": "Date and time when the post was saved",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "description": "Date and time when the post was last updated",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
             }
         },
         "securitySchemes": {
@@ -339,8 +1429,32 @@
     },
     "tags": [
         {
+            "name": "Comments",
+            "description": "Comments"
+        },
+        {
+            "name": "Likes",
+            "description": "Likes"
+        },
+        {
             "name": "Posts",
             "description": "Posts"
+        },
+        {
+            "name": "Repost",
+            "description": "Repost"
+        },
+        {
+            "name": "SavedPosts",
+            "description": "SavedPosts"
+        },
+        {
+            "name": "Search",
+            "description": "Search"
+        },
+        {
+            "name": "SharePost",
+            "description": "SharePost"
         }
     ]
 }

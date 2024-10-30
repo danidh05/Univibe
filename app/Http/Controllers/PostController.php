@@ -8,6 +8,7 @@ use App\Models\PollOption;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Http\Requests\PostRequest;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * @OA\Schema(
@@ -57,9 +58,9 @@ use App\Http\Requests\PostRequest;
 
 class PostController extends Controller
 {
-    /**
+/**
  * @OA\Get(
- *     path="/api/posts/{post}",
+ *     path="/posts/{post}",
  *     summary="Get a single post",
  *     description="Retrieve details of a single post by its ID",
  *     tags={"Posts"},
@@ -129,16 +130,17 @@ class PostController extends Controller
 
 /**
  * @OA\Post(
- *     path="/api/add_post",
+ *     path="/add_post",
  *     summary="Create a new post",
- *     description="Create a new post and optionally add poll options if the post is a poll",
+ *     description="Create a new post and optionally add poll options if the postType is 'poll'. The 'poll_options' field is only required and enabled when 'postType' is 'poll'.",
  *     tags={"Posts"},
  *     @OA\RequestBody(
  *         required=true,
  *         description="Post object that needs to be added",
  *         @OA\MediaType(
- *             mediaType="application/json",
+ *             mediaType="multipart/form-data",
  *             @OA\Schema(
+ *                 type="object",
  *                 @OA\Property(
  *                     property="title",
  *                     type="string",
@@ -154,21 +156,36 @@ class PostController extends Controller
  *                 @OA\Property(
  *                     property="postType",
  *                     type="string",
- *                     description="The type of post (e.g., poll, normal)",
- *                     example="poll"
+ *                     description="The type of post (e.g., text, image, video, poll). If 'poll', you need to provide poll options.",
+ *                     example="poll",
+ *                     enum={"text", "image", "video", "poll"}
  *                 ),
  *                 @OA\Property(
- *                     property="poll",
- *                     type="object",
- *                     description="Poll details, if postType is 'poll'",
- *                     @OA\Property(
- *                         property="options",
- *                         type="array",
- *                         @OA\Items(type="string"),
- *                         description="Options for the poll"
- *                     )
+ *                     property="poll_options",
+ *                     type="array",
+ *                     @OA\Items(type="string"),
+ *                     description="Options for the poll. Only required if 'postType' is 'poll'.",
+ *                     example={"Option 1", "Option 2"}
  *                 ),
- *                 required={"title", "content"}
+ *                 @OA\Property(
+ *                     property="user_id",
+ *                     type="integer",
+ *                     description="ID of the user creating the post.",
+ *                     example=1
+ *                 ),
+ *                 @OA\Property(
+ *                     property="image",
+ *                     type="file",
+ *                     description="Image file for the post if postType is 'image'.",
+ *                     format="binary"
+ *                 ),
+ *                 @OA\Property(
+ *                     property="video",
+ *                     type="file",
+ *                     description="Video file for the post if postType is 'video'.",
+ *                     format="binary"
+ *                 ),
+ *                 required={"title", "content", "postType", "user_id"}
  *             )
  *         )
  *     ),
@@ -183,33 +200,61 @@ class PostController extends Controller
  *     )
  * )
  */
-    public function add_post(PostRequest $request)
-    {
-        try {
-            $post = Post::create($request->validated());
+public function add_post(PostRequest $request)
+{
+    // Validation rules based on the postType
+    $request->validate([
+        'title' => 'required|string',
+        'content' => 'required|string',
+        'postType' => 'required|in:text,image,video,poll',
+        'poll_options' => 'required_if:postType,poll|array',  // Poll options required only if postType is 'poll'
+        'poll_options.*' => 'string',  // Each poll option must be a string
+        'image' => 'required_if:postType,image|file|mimes:jpg,png,jpeg|max:2048',  // Image validation for 'image' type
+        'video' => 'required_if:postType,video|file|mimes:mp4,mov,avi|max:10240'  // Video validation for 'video' type
+    ]);
 
-            if ($post->postType === 'poll') {
-                foreach ($request->poll['options'] as $option) {
-                    PollOption::create([
-                        'post_id' => $post->id,
-                        'option' => $option
-                    ]);
-                }
-            }
+    try {
+        // Prepare post data from validated input
+        $postData = $request->validated();
+        $postData['user_id'] = $request->user_id;  // Attach the authenticated user
 
-            return response()->json($post,  Response::HTTP_CREATED);
-
-        } catch (\Exception $e) {
-
-            // Log::error('Error creating post: '.$e->getMessage());
-
-            return response()->json(['error' => 'Failed to create post'], 500);
+        // Handle file uploads for image or video depending on the postType
+        if ($request->postType === 'image' && $request->hasFile('image')) {
+            $postData['image'] = $request->file('image')->store('images');  // Save image in 'images' directory
+        } else {
+            $postData['image'] = null;  // Set to null if not an image postType
         }
+
+        if ($request->postType === 'video' && $request->hasFile('video')) {
+            $postData['video'] = $request->file('video')->store('videos');  // Save video in 'videos' directory
+        } else {
+            $postData['video'] = null;  // Set to null if not a video postType
+        }
+
+        // Create the post in the database
+        $post = Post::create($postData);
+
+        // If postType is 'poll', handle the poll options
+        if ($request->postType === 'poll') {
+            foreach ($request->poll_options as $option) {
+                PollOption::create([
+                    'post_id' => $post->id,
+                    'option' => $option
+                ]);
+            }
+        }
+
+        return response()->json($post, Response::HTTP_CREATED);
+
+    } catch (\Exception $e) {
+        // Handle exceptions (log them if necessary)
+        return response()->json(['error' => 'Failed to create post: ' . $e->getMessage()], 500);
     }
+}
 
     /**
  * @OA\Get(
- *     path="/api/show_user_post/{id}",
+ *     path="/show_user_post/{id}",
  *     summary="Get posts by user",
  *     description="Retrieve all posts made by a specific user",
  *     tags={"Posts"},
@@ -248,7 +293,7 @@ class PostController extends Controller
 
     /**
  * @OA\Put(
- *     path="/api/update_post/{id}",
+ *     path="/update_post/{id}",
  *     summary="Update a post",
  *     description="Update an existing post and optionally update poll options if it's a poll",
  *     tags={"Posts"},
@@ -321,7 +366,7 @@ class PostController extends Controller
 
     /**
  * @OA\Delete(
- *     path="/api/delete_post/{id}",
+ *     path="/delete_post/{id}",
  *     summary="Delete a post",
  *     description="Delete an existing post by its ID",
  *     tags={"Posts"},
