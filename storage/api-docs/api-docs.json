@@ -1,141 +1,68 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "Univibe API",
-        "description": "API documentation for Univibe project",
+        "title": "My First API Documentation",
         "contact": {
-            "name": "Your Name",
-            "email": "your.email@example.com"
+            "email": "info@yeagger.com"
         },
-        "version": "1.0.0"
+        "version": "0.1"
     },
+    "servers": [
+        {
+            "url": "https://foo.localhost:8000/api/",
+            "description": "Learning env"
+        }
+    ],
     "paths": {
-        "/api/courses": {
-            "get": {
+        "/user/follow": {
+            "post": {
                 "tags": [
-                    "Courses"
+                    "Follow"
                 ],
-                "summary": "Get all courses",
-                "description": "Returns a list of all courses",
-                "operationId": "02eeda67042dba2d22a517f26fb8eaf1",
+                "summary": "Follow a user",
+                "operationId": "501c38346ee36477d2a2b04fea842676",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "user_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "Successful operation"
                     },
-                    "401": {
-                        "description": "Unauthorized"
+                    "500": {
+                        "description": "Server failure"
                     }
                 }
-            },
+            }
+        },
+        "/user/unfollow": {
             "post": {
                 "tags": [
-                    "Courses"
+                    "Follow"
                 ],
-                "summary": "Store a new course",
-                "description": "Stores a new course and returns the created course",
-                "operationId": "a4d6b7e7be59571034428ffbb86aaf0a",
+                "summary": "Unfollow a user",
+                "operationId": "cbb297cddc01ede261b3f2b595cf8ed1",
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "properties": {
-                                    "title": {
-                                        "type": "string",
-                                        "example": "Introduction to Programming"
-                                    },
-                                    "description": {
-                                        "type": "string",
-                                        "example": "An introductory course on programming concepts."
-                                    },
-                                    "credits": {
+                                    "user_id": {
                                         "type": "integer",
-                                        "example": 3
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Course created successfully"
-                    },
-                    "400": {
-                        "description": "Validation error"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    }
-                }
-            }
-        },
-        "/api/about-us/titles": {
-            "post": {
-                "tags": [
-                    "About Us"
-                ],
-                "summary": "Create an About Us title",
-                "description": "Creates a new About Us title and returns the created title",
-                "operationId": "ea2c8e067ebd71033b7c41de081b7a47",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "title": {
-                                        "type": "string",
-                                        "example": "About Our Company"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "About Us title created successfully"
-                    },
-                    "400": {
-                        "description": "Validation error"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    }
-                }
-            }
-        },
-        "/api/about-us/{aboutUsId}/details": {
-            "put": {
-                "tags": [
-                    "About Us"
-                ],
-                "summary": "Update an About Us detail",
-                "description": "Updates the specified detail for the About Us entry",
-                "operationId": "7b6cde587d861d97a15a5aa7f6a73a37",
-                "parameters": [
-                    {
-                        "name": "aboutUsId",
-                        "in": "path",
-                        "description": "ID of the About Us entry",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "description": {
-                                        "type": "string",
-                                        "example": "Updated description for About Us"
+                                        "example": 1
                                     }
                                 },
                                 "type": "object"
@@ -145,100 +72,58 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "About Us detail updated successfully"
+                        "description": "Successful operation"
                     },
                     "404": {
-                        "description": "About Us entry not found"
+                        "description": "Not found, You are not following that user"
                     },
-                    "400": {
-                        "description": "Validation error"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    }
-                }
-            },
-            "post": {
-                "tags": [
-                    "About Us"
-                ],
-                "summary": "Add detail to About Us",
-                "description": "Creates a new detail for the specified About Us entry",
-                "operationId": "9efd100d1c588c056741a4faf592a09f",
-                "parameters": [
-                    {
-                        "name": "aboutUsId",
-                        "in": "path",
-                        "description": "ID of the About Us entry",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "description": {
-                                        "type": "string",
-                                        "example": "We are dedicated to excellence..."
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "About Us detail added successfully"
-                    },
-                    "400": {
-                        "description": "Validation error"
-                    },
-                    "404": {
-                        "description": "About Us entry not found"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
+                    "500": {
+                        "description": "Server failure"
                     }
                 }
             }
         },
-        "/api/about-us": {
+        "/user/is_following/{user_id}": {
             "get": {
                 "tags": [
-                    "About Us"
+                    "Follow"
                 ],
-                "summary": "Get all About Us entries with details",
-                "description": "Retrieves all About Us entries along with their details",
-                "operationId": "5ef71d894f1df7290a385eb3d33fa0af",
+                "summary": "Check if you are following the specified user",
+                "operationId": "11ad45c996914083bb7b30a719b6db4e",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "About Us entries retrieved successfully"
+                        "description": "Successful operation"
                     },
-                    "401": {
-                        "description": "Unauthorized"
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "500": {
+                        "description": "Server failure"
                     }
                 }
             }
         },
-        "/api/about-us/{aboutUsId}": {
+        "/user/is_followed/{user_id}": {
             "get": {
                 "tags": [
-                    "About Us"
+                    "Follow"
                 ],
-                "summary": "Get a single About Us entry with details",
-                "description": "Retrieves a single About Us entry by ID along with its details",
-                "operationId": "6e0f3299f75e8c94c70735ae866edc37",
+                "summary": "Check if you are followed by the specified user",
+                "operationId": "52124d1072957ca63e700c4e49d33c33",
                 "parameters": [
                     {
-                        "name": "aboutUsId",
+                        "name": "user_id",
                         "in": "path",
-                        "description": "ID of the About Us entry",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -247,125 +132,880 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "About Us entry retrieved successfully"
+                        "description": "Successful operation"
                     },
                     "404": {
-                        "description": "About Us entry not found"
+                        "description": "User not found"
                     },
-                    "401": {
-                        "description": "Unauthorized"
+                    "500": {
+                        "description": "Server failure"
                     }
                 }
             }
         },
-        "/api/about-us/{id}": {
-            "put": {
+        "/user/get_follower_list": {
+            "get": {
                 "tags": [
-                    "About Us"
+                    "Follow"
                 ],
-                "summary": "Update an About Us title",
-                "description": "Updates the specified About Us title",
-                "operationId": "08b2af0c343f588c201f7c1460647bd1",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID of the About Us entry",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "title": {
-                                        "type": "string",
-                                        "example": "Updated About Us Title"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
+                "summary": "Gets you a list of the users that follow you",
+                "operationId": "25ef1f2caa41a0f47439d43161004534",
                 "responses": {
                     "200": {
-                        "description": "About Us updated successfully"
+                        "description": "Successful operation"
                     },
-                    "404": {
-                        "description": "About Us entry not found"
-                    },
-                    "400": {
-                        "description": "Validation error"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
+                    "500": {
+                        "description": "Server failure"
                     }
                 }
             }
         },
-        "/api/register": {
+        "/user/get_following_list": {
+            "get": {
+                "tags": [
+                    "Follow"
+                ],
+                "summary": "Gets you a list of the users you follow",
+                "operationId": "fa5221ac496cb0fd870ca736432f9633",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/user/send_friend_request": {
             "post": {
                 "tags": [
-                    "Authentication"
+                    "Friend"
                 ],
-                "summary": "Register a new user",
-                "operationId": "8a56853624e025573120a09a4c75d468",
+                "summary": "Send a friend request to a user",
+                "operationId": "4089ca3e26f315b9981a5b5aa6ceb6b0",
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "first_name",
-                                    "last_name",
-                                    "email",
-                                    "password",
-                                    "university_id",
-                                    "major_id"
+                                    "user_id"
                                 ],
                                 "properties": {
-                                    "first_name": {
+                                    "user_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Other errors/conflicts, already friend, already sent friend request, pending friend request from said user, sending friend request to yourself"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/user/accept_friend_request": {
+            "post": {
+                "tags": [
+                    "Friend"
+                ],
+                "summary": "Accept a friend request",
+                "operationId": "b41d6cc28197bb091aba7a49f9059739",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "request_id"
+                                ],
+                                "properties": {
+                                    "request_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "403": {
+                        "description": "Unauthorized action"
+                    },
+                    "422": {
+                        "description": "Validation failed"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/user/reject_friend_request": {
+            "post": {
+                "tags": [
+                    "Friend"
+                ],
+                "summary": "Reject a friend request",
+                "operationId": "3bdde88052e5fe80c998d557a8d38490",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "request_id"
+                                ],
+                                "properties": {
+                                    "request_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "403": {
+                        "description": "Unauthorized action"
+                    },
+                    "422": {
+                        "description": "Validation failed"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/user/cancel_friend_request": {
+            "post": {
+                "tags": [
+                    "Friend"
+                ],
+                "summary": "Cancel a friend request",
+                "operationId": "cancelFriendRequest",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "request_id"
+                                ],
+                                "properties": {
+                                    "request_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "403": {
+                        "description": "Unauthorized action"
+                    },
+                    "422": {
+                        "description": "Validation failed"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/user/remove_friend": {
+            "delete": {
+                "tags": [
+                    "Friend"
+                ],
+                "summary": "Remove a friend",
+                "operationId": "c41365ce49a095c9bdd5959db2a0926f",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "query",
+                        "description": "ID of the user to unfriend",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Other errors/conflicts, unfriending yourself, removing a user that isn't a friend"
+                    },
+                    "422": {
+                        "description": "Validation failed"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/user/get_friends_list": {
+            "get": {
+                "tags": [
+                    "Friend"
+                ],
+                "summary": "Get friends list",
+                "operationId": "e678eb536e8e3760d287c2e7ea4efde6",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/user/get_all_sent_friend_requests": {
+            "get": {
+                "tags": [
+                    "Friend"
+                ],
+                "summary": "Get all sent friend requests",
+                "operationId": "0169eafb5d1bfac37bcdb01d71bbcb6d",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/user/get_all_received_friend_requests": {
+            "get": {
+                "tags": [
+                    "Friend"
+                ],
+                "summary": "Get all received friend requests",
+                "operationId": "6be9c90c02f24eb18e791847502a0e67",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/user/is_friend/{user_id}": {
+            "get": {
+                "tags": [
+                    "Friend"
+                ],
+                "summary": "Checks if you are friends with the specified user",
+                "operationId": "cf365cd66d2cb811ac5a58f871a224f8",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "description": "The ID of the user to check friendship status",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/groups/create": {
+            "post": {
+                "tags": [
+                    "Group Chat"
+                ],
+                "summary": "Create a group",
+                "operationId": "3bf3ff3c947e63766bcb15942da42a7c",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "description": "The name of the group",
                                         "type": "string",
-                                        "example": "John"
+                                        "example": "My Group"
                                     },
-                                    "last_name": {
+                                    "photo": {
+                                        "description": "Optional group photo (jpeg, png, jpg)",
                                         "type": "string",
-                                        "example": "Doe"
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "422": {
+                        "description": "Validation failed"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/groups/get": {
+            "get": {
+                "tags": [
+                    "Group Chat"
+                ],
+                "summary": "Gets all the group chats you are in",
+                "operationId": "d0f3a720482d7232805680bfd15b2de1",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "422": {
+                        "description": "Validation failed"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/groups/update/name": {
+            "put": {
+                "tags": [
+                    "Group Chat"
+                ],
+                "summary": "Updates the name of the group chat",
+                "operationId": "034401dc079ed5c8082412595eaef9ca",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "group_chat_id"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "New Group Name"
                                     },
-                                    "email": {
+                                    "group_chat_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "422": {
+                        "description": "Validation failed"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/groups/update/photo": {
+            "put": {
+                "tags": [
+                    "Group Chat"
+                ],
+                "summary": "Updates the photo of the group chat",
+                "operationId": "fd91bc0568412bd5aac694b35fa05a46",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "photo",
+                                    "group_chat_id"
+                                ],
+                                "properties": {
+                                    "photo": {
                                         "type": "string",
-                                        "example": "john.doe@students.university.edu"
+                                        "format": "binary"
                                     },
-                                    "password": {
+                                    "group_chat_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "422": {
+                        "description": "Validation failed"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/groups/delete": {
+            "delete": {
+                "tags": [
+                    "Group Chat"
+                ],
+                "summary": "Deletes a group chat",
+                "operationId": "d93ab2f740f719387d887bf9f0ce562b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "group_chat_id"
+                                ],
+                                "properties": {
+                                    "group_chat_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/group/members/add": {
+            "post": {
+                "tags": [
+                    "Group Member"
+                ],
+                "summary": "Add a member to the group chat",
+                "operationId": "6804287a880d345844a8fe8608f8f48b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "user_id",
+                                    "group_chat_id"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "group_chat_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "409": {
+                        "description": "Conflict, member limit reached (max 100 members) or already member of the group"
+                    },
+                    "422": {
+                        "description": "Validation failed"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/group/members/remove": {
+            "post": {
+                "tags": [
+                    "Group Member"
+                ],
+                "summary": "Remove a member from the group chat",
+                "operationId": "c8a41d37a46e5fe9c960714b4aeaed5c",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "user_id",
+                                    "group_chat_id"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "group_chat_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "403": {
+                        "description": "Unauthorized action"
+                    },
+                    "404": {
+                        "description": "Member not found"
+                    },
+                    "422": {
+                        "description": "Validation failed"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/group/members/leave": {
+            "post": {
+                "tags": [
+                    "Group Member"
+                ],
+                "summary": "Leave the group chat",
+                "operationId": "b4f618b46bae62051b7b8237daf0db32",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "group_chat_id"
+                                ],
+                                "properties": {
+                                    "group_chat_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "403": {
+                        "description": "Unauthorized action"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/messages/send": {
+            "post": {
+                "tags": [
+                    "Private Message"
+                ],
+                "summary": "Send a private message",
+                "operationId": "3f3d935c02e46bd55272719562125836",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "receiver_id": {
+                                        "description": "The ID of the user receiving the message",
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "content": {
+                                        "description": "The content of the message",
                                         "type": "string",
-                                        "example": "Password@123"
+                                        "example": "Hello, how are you?"
+                                    },
+                                    "media": {
+                                        "description": "Optional media file to send with the message",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "422": {
+                        "description": "Validation failed"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/messages/read_all_private_messages": {
+            "post": {
+                "tags": [
+                    "Private Message"
+                ],
+                "summary": "Mark all the messages between you and another user as read",
+                "operationId": "a04610037eeea240c675865df715ed48",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "user_id": {
+                                        "description": "The ID of the user whose messages are to be marked as read",
+                                        "type": "integer",
+                                        "example": 2
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "422": {
+                        "description": "Validation failed"
+                    },
+                    "404": {
+                        "description": "No messages found to update"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/messages/mark_message_delivered": {
+            "post": {
+                "tags": [
+                    "Private Message"
+                ],
+                "summary": "Mark a message of yours as delivered",
+                "operationId": "b5c85582529a836545e46223e672a58f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "message_id": {
+                                        "description": "The ID of the message to be marked as delivered",
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "403": {
+                        "description": "Unauthorized action"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/messages/get/{user_id}": {
+            "get": {
+                "tags": [
+                    "Private Message"
+                ],
+                "summary": "Retrieve all messages between the authenticated user and a specified user",
+                "operationId": "31fc4f6b8096d7b3924d71f1bb8aa260",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "description": "The ID of the user to retrieve messages with",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 2
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/messages/delete": {
+            "delete": {
+                "tags": [
+                    "Private Message"
+                ],
+                "summary": "Delete a private message",
+                "operationId": "a298fd0d2e4d572c5c8208a3f8f0a971",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "message_id": {
+                                        "description": "The ID of the message to be deleted",
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "403": {
+                        "description": "Unauthorized action"
+                    },
+                    "422": {
+                        "description": "Validation failed"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/user/update": {
+            "post": {
+                "tags": [
+                    "User Profile"
+                ],
+                "summary": "Update user profile",
+                "operationId": "e1908c55c8b3743a68b8453d679ad746",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "username"
+                                ],
+                                "properties": {
+                                    "username": {
+                                        "type": "string",
+                                        "example": "new_username"
+                                    },
+                                    "bio": {
+                                        "type": "string",
+                                        "example": "This is my new bio."
                                     },
                                     "profile_picture": {
                                         "type": "string",
-                                        "format": "binary",
-                                        "example": "profile_picture.jpg"
-                                    },
-                                    "is_verified": {
-                                        "type": "boolean",
-                                        "example": false
-                                    },
-                                    "is_active": {
-                                        "type": "boolean",
-                                        "example": true
-                                    },
-                                    "university_id": {
-                                        "type": "integer",
-                                        "example": 1
-                                    },
-                                    "major_id": {
-                                        "type": "integer",
-                                        "example": 2
+                                        "format": "binary"
                                     }
                                 },
                                 "type": "object"
@@ -373,315 +1013,41 @@
                         }
                     }
                 },
-                "responses": {
-                    "200": {
-                        "description": "Verification email was sent",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Verification Email was sent"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid input",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "error": {
-                                            "type": "string",
-                                            "example": "Validation error"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/login": {
-            "post": {
-                "tags": [
-                    "Authentication"
-                ],
-                "summary": "Login a user",
-                "operationId": "a3b306d14572d1f4bd6c064b3233e7b8",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "email",
-                                    "password"
-                                ],
-                                "properties": {
-                                    "email": {
-                                        "type": "string",
-                                        "example": "john.doe@students.university.edu"
-                                    },
-                                    "password": {
-                                        "type": "string",
-                                        "example": "Password@123"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Login successful",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Login successful"
-                                        },
-                                        "token": {
-                                            "type": "string",
-                                            "example": "your_jwt_token_here"
-                                        },
-                                        "user": {
-                                            "properties": {
-                                                "id": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "first_name": {
-                                                    "type": "string",
-                                                    "example": "John"
-                                                },
-                                                "last_name": {
-                                                    "type": "string",
-                                                    "example": "Doe"
-                                                },
-                                                "email": {
-                                                    "type": "string",
-                                                    "example": "john.doe@students.university.edu"
-                                                },
-                                                "role": {
-                                                    "properties": {
-                                                        "Role_name": {
-                                                            "type": "string",
-                                                            "example": "Student"
-                                                        }
-                                                    },
-                                                    "type": "object"
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Invalid credentials",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "error": {
-                                            "type": "string",
-                                            "example": "Invalid credentials"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/logout": {
-            "post": {
-                "tags": [
-                    "Authentication"
-                ],
-                "summary": "Logout a user",
-                "operationId": "fe8f3429cd6979b3b4517e186505f9f9",
-                "responses": {
-                    "200": {
-                        "description": "Logged out successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Logged out successfully"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/courses/{id}": {
-            "get": {
-                "tags": [
-                    "Courses"
-                ],
-                "summary": "Show a single course",
-                "description": "Returns a single course by ID",
-                "operationId": "f170bd35e3106c9d9bf5807499c80b68",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID of the course",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "Successful operation"
                     },
-                    "404": {
-                        "description": "Course not found"
+                    "422": {
+                        "description": "Validation failed"
                     },
-                    "401": {
-                        "description": "Unauthorized"
+                    "500": {
+                        "description": "Server failure"
                     }
                 }
-            },
+            }
+        },
+        "/messages/update": {
             "put": {
                 "tags": [
-                    "Courses"
+                    "Private Message"
                 ],
-                "summary": "Update an existing course",
-                "description": "Updates an existing course and returns the updated course",
-                "operationId": "4d00e54a4b57b3259c40894ad2d0c76b",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID of the course",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
+                "summary": "Update a message",
+                "operationId": "745d0b897001c65173d48739fe3c9f05",
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "properties": {
-                                    "title": {
-                                        "type": "string",
-                                        "example": "Updated Course Title"
-                                    },
-                                    "description": {
-                                        "type": "string",
-                                        "example": "Updated description of the course."
-                                    },
-                                    "credits": {
-                                        "type": "integer",
-                                        "example": 4
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Course updated successfully"
-                    },
-                    "404": {
-                        "description": "Course not found"
-                    },
-                    "400": {
-                        "description": "Validation error"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    }
-                }
-            },
-            "delete": {
-                "tags": [
-                    "Courses"
-                ],
-                "summary": "Delete a course",
-                "description": "Deletes an existing course by ID",
-                "operationId": "3a2888333ed2868b6102094f5348520e",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID of the course",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Course deleted successfully"
-                    },
-                    "404": {
-                        "description": "Course not found"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    }
-                }
-            }
-        },
-        "/api/instructors": {
-            "post": {
-                "tags": [
-                    "Instructors"
-                ],
-                "summary": "Store a new instructor",
-                "description": "Stores a new instructor and returns the created instructor",
-                "operationId": "eafa861e61374164ae9f5395c66d6657",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "example": "John Doe"
-                                    },
-                                    "rating": {
-                                        "type": "number",
-                                        "format": "float",
-                                        "example": 4.5
-                                    },
-                                    "university_id": {
+                                    "message_id": {
+                                        "description": "The ID of the message to be updated",
                                         "type": "integer",
                                         "example": 1
+                                    },
+                                    "content": {
+                                        "description": "The new content of the message",
+                                        "type": "string",
+                                        "example": "Updated message content"
                                     }
                                 },
                                 "type": "object"
@@ -689,411 +1055,18 @@
                         }
                     }
                 },
-                "responses": {
-                    "201": {
-                        "description": "Instructor created successfully"
-                    },
-                    "400": {
-                        "description": "Validation error"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    }
-                }
-            }
-        },
-        "/api/instructors/{id}": {
-            "get": {
-                "tags": [
-                    "Instructors"
-                ],
-                "summary": "Show a specific instructor",
-                "description": "Returns a single instructor by ID",
-                "operationId": "8535ef66d60a0f1728115c4869200929",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID of the instructor",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "Successful operation"
                     },
-                    "404": {
-                        "description": "Instructor not found"
+                    "403": {
+                        "description": "Unauthorized action"
                     },
-                    "401": {
-                        "description": "Unauthorized"
-                    }
-                }
-            },
-            "put": {
-                "tags": [
-                    "Instructors"
-                ],
-                "summary": "Update an existing instructor",
-                "description": "Updates an existing instructor and returns the updated instructor",
-                "operationId": "37dfc86f68847bc6236a645ff5164a55",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID of the instructor",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "example": "Updated Name"
-                                    },
-                                    "rating": {
-                                        "type": "number",
-                                        "format": "float",
-                                        "example": 4.7
-                                    },
-                                    "university_id": {
-                                        "type": "integer",
-                                        "example": 1
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Instructor updated successfully"
+                    "422": {
+                        "description": "Validation failed"
                     },
-                    "404": {
-                        "description": "Instructor not found"
-                    },
-                    "400": {
-                        "description": "Validation error"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    }
-                }
-            },
-            "delete": {
-                "tags": [
-                    "Instructors"
-                ],
-                "summary": "Delete an instructor",
-                "description": "Deletes an existing instructor by ID",
-                "operationId": "319535f0b03fcd732b98b460873db9c7",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID of the instructor",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Instructor deleted successfully"
-                    },
-                    "404": {
-                        "description": "Instructor not found"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    }
-                }
-            }
-        },
-        "/api/internships": {
-            "get": {
-                "tags": [
-                    "Internships"
-                ],
-                "summary": "Get all internships",
-                "description": "Returns a list of all internships",
-                "operationId": "e74ba8f8c38595f4ef3ae05c4cbe1390",
-                "responses": {
-                    "200": {
-                        "description": "Successful operation"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    }
-                }
-            },
-            "post": {
-                "tags": [
-                    "Internships"
-                ],
-                "summary": "Store a new internship",
-                "description": "Stores a new internship and returns the created internship",
-                "operationId": "2a7b395aba72f9bf95f5530b3318e6d8",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "title": {
-                                        "type": "string",
-                                        "example": "Software Engineering Internship"
-                                    },
-                                    "major_id": {
-                                        "type": "integer",
-                                        "example": 1
-                                    },
-                                    "description": {
-                                        "type": "string",
-                                        "example": "A great opportunity to learn software development."
-                                    },
-                                    "link": {
-                                        "type": "string",
-                                        "format": "url",
-                                        "example": "https://example.com/internship"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Internship created successfully"
-                    },
-                    "400": {
-                        "description": "Validation error"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    }
-                }
-            }
-        },
-        "/api/internships/{id}": {
-            "get": {
-                "tags": [
-                    "Internships"
-                ],
-                "summary": "Show a single internship",
-                "description": "Returns a single internship by ID",
-                "operationId": "34ebc6dd4c3fe8e33b4a77233dcf1324",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID of the internship",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful operation"
-                    },
-                    "404": {
-                        "description": "Internship not found"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    }
-                }
-            },
-            "put": {
-                "tags": [
-                    "Internships"
-                ],
-                "summary": "Update an existing internship",
-                "description": "Updates an existing internship and returns the updated internship",
-                "operationId": "dc03c095549bafd1e28057eb53b4a974",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID of the internship",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "title": {
-                                        "type": "string",
-                                        "example": "Updated Internship Title"
-                                    },
-                                    "major_id": {
-                                        "type": "integer",
-                                        "example": 2
-                                    },
-                                    "description": {
-                                        "type": "string",
-                                        "example": "Updated description of the internship."
-                                    },
-                                    "link": {
-                                        "type": "string",
-                                        "format": "url",
-                                        "example": "https://example.com/updated-internship"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Internship updated successfully"
-                    },
-                    "404": {
-                        "description": "Internship not found"
-                    },
-                    "400": {
-                        "description": "Validation error"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    }
-                }
-            },
-            "delete": {
-                "tags": [
-                    "Internships"
-                ],
-                "summary": "Delete an internship",
-                "description": "Deletes an existing internship by ID",
-                "operationId": "1ce8a406e4c5fdcce2956d6e4213e790",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID of the internship",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Internship deleted successfully"
-                    },
-                    "404": {
-                        "description": "Internship not found"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    }
-                }
-            }
-        },
-        "/api/user/deactivate": {
-            "post": {
-                "tags": [
-                    "User"
-                ],
-                "summary": "Deactivate a user's account",
-                "operationId": "a38e356a339bf90b689f9a2c99a6fac5",
-                "responses": {
-                    "200": {
-                        "description": "Account has been successfully deactivated.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Account has been successfully deactivated."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Unauthenticated."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/user/undeactivate": {
-            "post": {
-                "tags": [
-                    "User"
-                ],
-                "summary": "Undeactivate a user's account",
-                "operationId": "de9c50e3ae32631bcd7fe834055ac697",
-                "responses": {
-                    "200": {
-                        "description": "Account has been successfully undeactivated.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Account has been successfully undeactivated."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Unauthenticated."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                    "500": {
+                        "description": "Server failure"
                     }
                 }
             }
@@ -1101,28 +1074,28 @@
     },
     "tags": [
         {
-            "name": "About Us",
-            "description": "About Us management endpoints"
+            "name": "Follow",
+            "description": "Follow"
         },
         {
-            "name": "Authentication",
-            "description": "Authentication operations"
+            "name": "Friend",
+            "description": "Friend"
         },
         {
-            "name": "Instructors",
-            "description": "Instructor management endpoints"
+            "name": "Group Chat",
+            "description": "Group Chat"
         },
         {
-            "name": "User",
-            "description": "User operations"
+            "name": "Group Member",
+            "description": "Group Member"
         },
         {
-            "name": "Courses",
-            "description": "Courses"
+            "name": "Private Message",
+            "description": "Private Message"
         },
         {
-            "name": "Internships",
-            "description": "Internships"
+            "name": "User Profile",
+            "description": "User Profile"
         }
     ]
 }

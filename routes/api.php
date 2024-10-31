@@ -10,20 +10,38 @@ use App\Http\Controllers\SharePostController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\EmailVerficationController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\LikeController;
+use App\Http\Controllers\PollController;
+use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\FollowsController;
-use App\Http\Controllers\FriendRequestController;
+use App\Http\Middleware\CheckGroupOwner;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\GroupMembersController;
 use App\Http\Controllers\InstructorController;
 use App\Http\Controllers\InternshipController;
+use App\Http\Controllers\GroupMessageController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\CheckGroupMember;
-use App\Http\Middleware\CheckGroupOwner;
 use App\Http\Middleware\UserIdValidation;
+use App\Http\Controllers\RepostController;
+use App\Http\Controllers\SearchController;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\FollowsController;
+use App\Http\Controllers\MessageController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SavePostController;
+use App\Http\Controllers\SharePostController;
+use App\Http\Controllers\GroupMembersController;
+use App\Http\Controllers\FriendRequestController;
+use App\Http\Controllers\EmailVerficationController;
+
+
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -58,8 +76,15 @@ Route::get('/get_save_post', [SavePostController::class, 'getAllSavePost']);
 Route::delete('/delete_save_post/{postId}', [SavePostController::class, 'deleteSavePost']);
 
 // {{ Share Post}}
-Route::post('/posts/{postId}/share-user', [SharePostController::class, 'ShareWithUsers'])->middleware('auth');
-Route::get('/posts/{postId}/copy-link', [SharePostController::class, 'copyLink'])->middleware('auth');
+Route::post('/posts/{postId}/share-user', [SharePostController::class, 'ShareWithUsers']);
+Route::get('/posts/{postId}/copy-link', [SharePostController::class, 'copyLink']);
+
+// {{ Repost }}
+Route::post('/posts/{id}/repost', [RepostController::class, 'repost']);
+Route::delete('/posts/{id}/repost', [RepostController::class, 'deleteRepost']);
+
+//{{ Search }}
+Route::get('/search', [SearchController::class, 'search']);
 
 
 // Ahmed
@@ -113,6 +138,8 @@ Route::post('/login', [AuthController::class, 'login']);
 
 // Ralph
 Route::post('/messages/send', [MessageController::class, 'sendPrivateMessage']);
+Route::post('/messages/read_all_private_messages', [MessageController::class, 'readAllPrivateMessages']);
+Route::post('/messages/mark_message_delivered', [MessageController::class, 'markAsDelivered']);
 Route::get('/messages/get/{user_id}', [MessageController::class, 'getPrivateMessages']);
 Route::put('/messages/update', [MessageController::class, 'updatePrivateMessage']);
 Route::delete('/messages/delete', [MessageController::class, 'deletePrivateMessage']);
@@ -122,6 +149,11 @@ Route::get('/groups/get', [GroupController::class, 'getMyGroups']);
 Route::put('/groups/update/name', [GroupController::class, 'updateGroupName'])->middleware(CheckGroupOwner::class);
 Route::put('/groups/update/photo', [GroupController::class, 'updateGroupPhoto'])->middleware(CheckGroupOwner::class); // there's a problem with sending data in "form-data"
 Route::delete('/groups/delete', [GroupController::class, 'deleteGroup'])->middleware(CheckGroupOwner::class);
+
+Route::post('/group/messages/send', [GroupMessageController::class, 'sendGroupMessage']);
+Route::get('/group/messages/get/{group_id}', [GroupMessageController::class, 'getGroupMessages']);
+Route::delete('/group/messages/delete', [GroupMessageController::class, 'deleteGroupMessage']);
+Route::put('/group/messages/update', [GroupMessageController::class, 'updateGroupMessage']);
 
 Route::post('/group/members/add', [GroupMembersController::class, 'add'])->middleware(CheckGroupOwner::class);
 Route::post('/group/members/remove', [GroupMembersController::class, 'remove'])->middleware(CheckGroupOwner::class); // either admin removing someone or someone removing himself

@@ -20,6 +20,23 @@ class FollowsController extends Controller
         $this->notificationService = $notificationService;
     }
     
+    /**
+     * @OA\PathItem(
+     *     path="/user/follow",
+     *     @OA\Post(
+     *         summary="Follow a user",
+     *         tags={"Follow"},
+     *         @OA\RequestBody(
+     *             required=true,
+     *             @OA\JsonContent(
+     *                 @OA\Property(property="user_id", type="integer", example=1)
+     *             )
+     *         ),
+     *         @OA\Response(response=200, description="Successful operation"),
+     *         @OA\Response(response=500, description="Server failure")
+     *     )
+     * )
+     */
     public function follow(Request $request){
         try {
             $user_id = $request->input('user_id');
@@ -51,6 +68,24 @@ class FollowsController extends Controller
         }
     }
 
+    /**
+     * @OA\PathItem(
+     *     path="/user/unfollow",
+     *     @OA\Post(
+     *         summary="Unfollow a user",
+     *         tags={"Follow"},
+     *         @OA\RequestBody(
+     *             required=true,
+     *             @OA\JsonContent(
+     *                 @OA\Property(property="user_id", type="integer", example=1)
+     *             )
+     *         ),
+     *         @OA\Response(response=200, description="Successful operation"),
+     *         @OA\Response(response=404, description="Not found, You are not following that user"),
+     *         @OA\Response(response=500, description="Server failure")
+     *     )
+     * )
+     */
     public function unfollow(Request $request){
         try {
             $user_id = $request->input('user_id');
@@ -79,6 +114,24 @@ class FollowsController extends Controller
         }
     }
 
+    /**
+     * @OA\PathItem(
+     *     path="/user/is_following/{user_id}",
+     *     @OA\Get(
+     *         summary="Check if you are following the specified user",
+     *         tags={"Follow"},
+     *         @OA\Parameter(
+     *             name="user_id",
+     *             in="path",
+     *             required=true,
+     *             @OA\Schema(type="integer")
+     *         ),
+     *         @OA\Response(response=200, description="Successful operation"),
+     *         @OA\Response(response=404, description="User not found"),
+     *         @OA\Response(response=500, description="Server failure")
+     *     )
+     * )
+     */
     public function is_following($user_id){
         try {
             $user = User::findOrFail($user_id);
@@ -108,6 +161,24 @@ class FollowsController extends Controller
         }
     }
 
+    /**
+     * @OA\PathItem(
+     *     path="/user/is_followed/{user_id}",
+     *     @OA\Get(
+     *         summary="Check if you are followed by the specified user",
+     *         tags={"Follow"},
+     *         @OA\Parameter(
+     *             name="user_id",
+     *             in="path",
+     *             required=true,
+     *             @OA\Schema(type="integer")
+     *         ),
+     *         @OA\Response(response=200, description="Successful operation"),
+     *         @OA\Response(response=404, description="User not found"),
+     *         @OA\Response(response=500, description="Server failure")
+     *     )
+     * )
+     */
     public function is_followed($user_id){
         try {
             $user = User::findOrFail($user_id);
@@ -137,6 +208,17 @@ class FollowsController extends Controller
         }
     }
 
+    /**
+     * @OA\PathItem(
+     *     path="/user/get_follower_list",
+     *     @OA\Get(
+     *         summary="Gets you a list of the users that follow you",
+     *         tags={"Follow"},
+     *         @OA\Response(response=200, description="Successful operation"),
+     *         @OA\Response(response=500, description="Server failure")
+     *     )
+     * )
+     */
     public function get_follower_list(){
         try {
             $user = User::findOrFail(Auth::id());
@@ -166,6 +248,17 @@ class FollowsController extends Controller
         }
     }
 
+    /**
+     * @OA\PathItem(
+     *     path="/user/get_following_list",
+     *     @OA\Get(
+     *         summary="Gets you a list of the users you follow",
+     *         tags={"Follow"},
+     *         @OA\Response(response=200, description="Successful operation"),
+     *         @OA\Response(response=500, description="Server failure")
+     *     )
+     * )
+     */
     public function get_following_list(){
         try {
             $user = User::findOrFail(Auth::id());

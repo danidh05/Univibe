@@ -23,6 +23,26 @@ class FriendRequestController extends Controller
         $this->notificationService = $notificationService;
     }
 
+    /**
+     * @OA\PathItem(
+     *     path="/user/send_friend_request",
+     *     @OA\Post(
+     *         summary="Send a friend request to a user",
+     *         tags={"Friend"},
+     *         @OA\Response(response=200, description="Successful operation"),
+     *         @OA\Response(response=400, description="Other errors/conflicts, already friend, already sent friend request, pending friend request from said user, sending friend request to yourself"),
+     *         @OA\Response(response=404, description="User not found"),
+     *         @OA\Response(response=500, description="Server failure"),
+     *         @OA\RequestBody(
+     *             required=true,
+     *             @OA\JsonContent(
+     *                 required={"user_id"},
+     *                 @OA\Property(property="user_id", type="integer", example=2)
+     *             )
+     *         )
+     *     )
+     * )
+     */
     public function send_friend_request(Request $request){
         try {
             $user_id = $request->input('user_id');
@@ -113,6 +133,26 @@ class FriendRequestController extends Controller
         }
     }
 
+    /**
+     * @OA\PathItem(
+     *     path="/user/accept_friend_request",
+     *     @OA\Post(
+     *         summary="Accept a friend request",
+     *         tags={"Friend"},
+     *         @OA\Response(response=200, description="Successful operation"),
+     *         @OA\Response(response=403, description="Unauthorized action"),
+     *         @OA\Response(response=422, description="Validation failed"),
+     *         @OA\Response(response=500, description="Server failure"),
+     *         @OA\RequestBody(
+     *             required=true,
+     *             @OA\JsonContent(
+     *                 required={"request_id"},
+     *                 @OA\Property(property="request_id", type="integer", example=1)
+     *             )
+     *         )
+     *     )
+     * )
+     */
     public function accept_friend_request(Request $request){
         try {
             $request->validate([
@@ -174,6 +214,13 @@ class FriendRequestController extends Controller
                     'message' => 'You are not authorized to accept this friend request.',
                 ], 403);
             }
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Return a custom validation error response
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed.',
+                'errors' => $e->errors(),
+            ], 422);
         } catch (\Throwable $th) {
             // Return a generic error response
             return response()->json([
@@ -183,6 +230,26 @@ class FriendRequestController extends Controller
         }
     }
 
+    /**
+     * @OA\PathItem(
+     *     path="/user/reject_friend_request",
+     *     @OA\Post(
+     *         summary="Reject a friend request",
+     *         tags={"Friend"},
+     *         @OA\Response(response=200, description="Successful operation"),
+     *         @OA\Response(response=403, description="Unauthorized action"),
+     *         @OA\Response(response=422, description="Validation failed"),
+     *         @OA\Response(response=500, description="Server failure"),
+     *         @OA\RequestBody(
+     *             required=true,
+     *             @OA\JsonContent(
+     *                 required={"request_id"},
+     *                 @OA\Property(property="request_id", type="integer", example=1)
+     *             )
+     *         )
+     *     )
+     * )
+     */
     public function reject_friend_request(Request $request){
         try {
             $request->validate([
@@ -224,6 +291,27 @@ class FriendRequestController extends Controller
         return $to_id == Auth::id();
     }
 
+    /**
+     * @OA\PathItem(
+     *     path="/user/cancel_friend_request",
+     *     @OA\Post(
+     *         operationId="cancelFriendRequest",
+     *         summary="Cancel a friend request",
+     *         tags={"Friend"},
+     *         @OA\RequestBody(
+     *             required=true,
+     *             @OA\JsonContent(
+     *                 required={"request_id"},
+     *                 @OA\Property(property="request_id", type="integer", example=1)
+     *             )
+     *         ),
+     *         @OA\Response(response=200, description="Successful operation"),
+     *         @OA\Response(response=403, description="Unauthorized action"),
+     *         @OA\Response(response=422, description="Validation failed"),
+     *         @OA\Response(response=500, description="Server failure")
+     *     )
+     * )
+     */
     public function cancel_friend_request(Request $request){
         try {
             $request->validate([
@@ -261,6 +349,26 @@ class FriendRequestController extends Controller
         }
     }
 
+    /**
+     * @OA\PathItem(
+     *     path="/user/remove_friend",
+     *     @OA\Delete(
+     *         summary="Remove a friend",
+     *         tags={"Friend"},
+     *         @OA\Parameter(
+     *             name="user_id",
+     *             in="query",
+     *             required=true,
+     *             description="ID of the user to unfriend",
+     *             @OA\Schema(type="integer")
+     *         ),
+     *         @OA\Response(response=200, description="Successful operation"),
+     *         @OA\Response(response=400, description="Other errors/conflicts, unfriending yourself, removing a user that isn't a friend"),
+     *         @OA\Response(response=422, description="Validation failed"),
+     *         @OA\Response(response=500, description="Server failure")
+     *     )
+     * )
+     */
     public function remove_friend(Request $request){
         try {
             $request->validate([
@@ -295,7 +403,13 @@ class FriendRequestController extends Controller
                 'message' => 'Friend successfully removed.',
             ], 200);
 
-
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Return a custom validation error response
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed.',
+                'errors' => $e->errors(),
+            ], 422);
         } catch (\Throwable $th) {
             // Return a generic error response
             return response()->json([
@@ -305,6 +419,17 @@ class FriendRequestController extends Controller
         }
     }
 
+    /**
+     * @OA\PathItem(
+     *     path="/user/get_friends_list",
+     *     @OA\Get(
+     *         summary="Get friends list",
+     *         tags={"Friend"},
+     *         @OA\Response(response=200, description="Successful operation"),
+     *         @OA\Response(response=500, description="Server failure")
+     *     )
+     * )
+     */
     public function get_friends_list(){
         try {
             $user = User::findOrFail(Auth::id());
@@ -333,6 +458,17 @@ class FriendRequestController extends Controller
         }
     }
 
+    /**
+     * @OA\PathItem(
+     *     path="/user/get_all_sent_friend_requests",
+     *     @OA\Get(
+     *         summary="Get all sent friend requests",
+     *         tags={"Friend"},
+     *         @OA\Response(response=200, description="Successful operation"),
+     *         @OA\Response(response=500, description="Server failure")
+     *     )
+     * )
+     */
     public function get_all_sent_friend_requests(){
         try {
             $user = User::findOrFail(Auth::id());
@@ -353,6 +489,17 @@ class FriendRequestController extends Controller
         }
     }
 
+    /**
+     * @OA\PathItem(
+     *     path="/user/get_all_received_friend_requests",
+     *     @OA\Get(
+     *         summary="Get all received friend requests",
+     *         tags={"Friend"},
+     *         @OA\Response(response=200, description="Successful operation"),
+     *         @OA\Response(response=500, description="Server failure")
+     *     )
+     * )
+     */
     public function get_all_received_friend_requests(){
         try {
             $user = User::findOrFail(Auth::id());
@@ -372,6 +519,25 @@ class FriendRequestController extends Controller
         }
     }
 
+    /**
+     * @OA\PathItem(
+     *     path="/user/is_friend/{user_id}",
+     *     @OA\Get(
+     *         summary="Checks if you are friends with the specified user",
+     *         tags={"Friend"},
+     *         @OA\Parameter(
+     *             name="user_id",
+     *             in="path",
+     *             required=true,
+     *             description="The ID of the user to check friendship status",
+     *             @OA\Schema(type="integer")
+     *         ),
+     *         @OA\Response(response=200, description="Successful operation"),
+     *         @OA\Response(response=404, description="User not found"),
+     *         @OA\Response(response=500, description="Server failure")
+     *     )
+     * )
+     */
     public function is_friend($user_id){
         try {
             $user = User::findOrFail(Auth::id());

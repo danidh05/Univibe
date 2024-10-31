@@ -5,9 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Message extends Model
+class GroupMessage extends Model
 {
     use HasFactory;
+
+    protected $table = 'group_chat_messages';
 
     /**
      * The attributes that are mass assignable.
@@ -16,13 +18,10 @@ class Message extends Model
      */
     protected $fillable = [
         'sender_id',
-        'receiver_id',
+        'receiver_group_id',
         'content',
-        'is_read',
         'media_url',
         'message_type',
-        'is_read',
-        'is_delivered',
     ];
 
     public function sender()
@@ -32,6 +31,6 @@ class Message extends Model
 
     public function receiver()
     {
-        return $this->belongsTo(User::class, 'receiver_id');
+        return $this->belongsTo(GroupChat::class, 'receiver_group_id');
     }
 }

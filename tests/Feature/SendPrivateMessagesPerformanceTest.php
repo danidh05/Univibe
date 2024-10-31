@@ -30,7 +30,7 @@ class SendPrivateMessagesPerformanceTest extends TestCase
                 'content' => 'Performance test message #' . $i,
             ]);
 
-            $response->assertStatus(201)
+            $response->assertStatus(200)
                      ->assertJson([
                          'success' => true,
                          'message' => 'Message sent successfully.',
