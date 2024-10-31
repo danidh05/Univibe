@@ -18,11 +18,12 @@ class MajorFactory extends Factory
      *
      * @return array<string, mixed>
      */
+
     public function definition(): array
     {
         return [
-            'major_name' => fake()->word(),
-            'faculty_id' => Faculty::first() ?? Faculty::factory()->create()->id, // Ensure the faculty exists
+            'major_name' => $this->faker->word . ' Major',
+            'faculty_id' => Faculty::factory(),
         ];
     }
 }

@@ -1,5 +1,15 @@
 <?php
 
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\LikeController;
+use App\Http\Controllers\PollController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\SavePostController;
+use App\Http\Controllers\SharePostController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CourseController;
+use App\Http\Controllers\EmailVerficationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -10,6 +20,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Middleware\CheckGroupOwner;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\GroupMembersController;
+use App\Http\Controllers\InstructorController;
+use App\Http\Controllers\InternshipController;
 use App\Http\Controllers\GroupMessageController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -38,21 +50,21 @@ Route::get('/user', function (Request $request) {
 // Jorj
 
 // {{ Post }}
-Route::get('/show_posts' , [PostController::class , 'index']);
-Route::post('/add_post' , [PostController::class , 'add_post']);
-Route::put('/update_post/{id}' , [PostController::class , 'update_post']);
-Route::delete('/delete_post/{id}' , [PostController::class , 'delete_post']);
-Route::get('/show_user_post/{id}' , [PostController::class , 'show_user_post']);
-Route::get('/posts/{post}', [PostController::class, 'show'])->name('posts.show');// show single post
+Route::get('/show_posts', [PostController::class, 'index']);
+Route::post('/add_post', [PostController::class, 'add_post']);
+Route::put('/update_post/{id}', [PostController::class, 'update_post']);
+Route::delete('/delete_post/{id}', [PostController::class, 'delete_post']);
+Route::get('/show_user_post/{id}', [PostController::class, 'show_user_post']);
+Route::get('/posts/{post}', [PostController::class, 'show'])->name('posts.show'); // show single post
 
 // {{  Comment }}
-Route::get('/show_comment/{postId}' , [CommentController::class , 'show_post_commnent']);
-Route::post('/add_comment/{postId}' , [CommentController::class , 'add_comment']);
-Route::put('/update_comment/{commentId}' , [CommentController::class , 'update_comment']);
-Route::delete('/delete_comment/{commentId}' , [CommentController::class , 'delete_comment']);
+Route::get('/show_comment/{postId}', [CommentController::class, 'show_post_commnent']);
+Route::post('/add_comment/{postId}', [CommentController::class, 'add_comment']);
+Route::put('/update_comment/{commentId}', [CommentController::class, 'update_comment']);
+Route::delete('/delete_comment/{commentId}', [CommentController::class, 'delete_comment']);
 
 // {{ Like }}
-Route::post('/like_post/{postId}' , [LikeController::class , 'likePost']);
+Route::post('/like_post/{postId}', [LikeController::class, 'likePost']);
 
 // {{ Poll }}
 Route::post('/posts/{postId}/vote', [PollController::class, 'vote']);
@@ -80,9 +92,44 @@ Route::get('/email/verify/{id}/{hash}', [EmailVerficationController::class, "ver
 
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::middleware('userAdmin')->group(function () {
-        Route::get('/admin', [UserController::class, 'getAdminInfo']);
+    Route::controller(UserController::class)->group(function () {
+        Route::put('/undeactivate', "undeactivate");
+        Route::put('/deactivate',  "deactivate");
     });
+    Route::middleware('userAdmin')->group(function () {
+        Route::controller(AdminController::class)->group(function () {
+            Route::post('/about-us/titles', 'createAboutUsTitle'); // Changed to a more RESTful format
+            Route::post('/about-us/{aboutUsId}/details', 'createAboutUsDetail'); // Changed to a more RESTful format
+
+            Route::get('/about-us', 'getAllAboutUsWithDetails'); // Changed to a more RESTful format
+            Route::get('/about-us/{aboutUsId}', 'getsingleAboutUsWithDetails'); // Changed to a more RESTful format
+            Route::put('/about-us/{aboutUsId}', 'updateAboutUs'); // Updated parameter name for consistency
+            Route::put('/about-us/{aboutUsId}/details', 'updateAboutUsDetail'); // Updated parameter name for consistency
+        });
+    });
+});
+
+Route::controller(CourseController::class)->group(function () {
+    Route::post('/courses', "store"); // Create a new course
+    Route::put('/courses/{id}', "update"); // Update an existing course
+    Route::get('/courses', "index"); // Show all courses
+    Route::get('/courses/{id}', "show"); // Show a single course
+    Route::delete('/courses/{id}', "destroy"); // Delete a course
+});
+
+Route::controller(InternshipController::class)->group(function () {
+    Route::get('/internships', 'index'); // Get all internships
+    Route::post('/internships', 'store'); // Create a new internship
+    Route::get('/internships/{id}', 'show'); // Get a single internship by ID
+    Route::put('/internships/{id}', 'update'); // Update an internship by ID
+    Route::delete('/internships/{id}', 'destroy'); // Delete an internship by ID
+});
+
+Route::controller(InstructorController::class)->group(function () {
+    Route::post('/createInstructors', 'store'); // Create instructor
+    Route::get('/instructors/{id}', 'show'); // Show specific instructor
+    Route::put('/updateInstructors/{id}', 'update'); // Update instructor
+    Route::delete('/deleteInstructors/{id}', 'destroy'); // Delete instructor
 });
 
 Route::post('/register', [AuthController::class, 'register']);

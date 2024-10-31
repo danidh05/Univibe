@@ -21,8 +21,8 @@ class EmailVerficationController extends Controller
             return response()->json(['message' => 'Email is already verified.']);
         }
         $user->markEmailAsVerified();
-        $user->isVerified = true;
+        $user->is_Verified = true;
         $user->save();
-        return response()->json(['message' => 'Email verified successfully.']);
+        return redirect(config("app.frontend_url") . "/login");
     }
 }

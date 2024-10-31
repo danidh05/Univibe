@@ -31,6 +31,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'is_verified',
         'major_id',
         'university_id',
+        "is_deactivated",
         'pusher_channel',
     ];
 
@@ -120,7 +121,7 @@ class User extends Authenticatable implements MustVerifyEmail
     public function friends()
     {
         return $this->hasMany(Follows::class, 'follower_id')
-                    ->where('is_friend', true);
+            ->where('is_friend', true);
     }
 
     public function sentFriendRequests()

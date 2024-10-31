@@ -15,17 +15,17 @@ class MajorSeeder extends Seeder
     {
         Major::create([
             'major_name' => 'Computer Science',
-            'faculty_id' => 4,
+            'faculty_id' => 1,
         ]);
 
         Major::create([
             'major_name' => 'Electrical Engineering',
-            'faculty_id' => 5,
+            'faculty_id' => 2,
         ]);
 
         Major::create([
             'major_name' => 'Business Administration',
-            'faculty_id' => 6,
+            'faculty_id' => 3,
         ]);
     }
 }
