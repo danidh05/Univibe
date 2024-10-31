@@ -9,6 +9,27 @@ use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
+    /**
+     * @OA\PathItem(
+     *     path="/user/update",
+     *     @OA\Post(
+     *         summary="Update user profile",
+     *         tags={"User Profile"},
+     *         @OA\Response(response=200, description="Successful operation"),
+     *         @OA\Response(response=422, description="Validation failed"),
+     *         @OA\Response(response=500, description="Server failure"),
+     *         @OA\RequestBody(
+     *             required=true,
+     *             @OA\JsonContent(
+     *                 required={"username"},
+     *                 @OA\Property(property="username", type="string", example="new_username"),
+     *                 @OA\Property(property="bio", type="string", example="This is my new bio."),
+     *                 @OA\Property(property="profile_picture", type="string", format="binary")
+     *             )
+     *         )
+     *     )
+     * )
+     */
     public function updateProfile(Request $request)
     {
         try {
@@ -62,8 +83,10 @@ class ProfileController extends Controller
             $user->save();
 
             // Return success message
-            return response()->json(['message' => 'Profile updated successfully.'], 200);
-                    } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'message' => 'Profile updated successfully.'
+            ], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
             // Return a custom validation error response
             return response()->json([
                 'success' => false,

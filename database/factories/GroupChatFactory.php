@@ -25,4 +25,16 @@ class GroupChatFactory extends Factory
             'owner_id' => User::factory(), // Assuming the owner is a User model
         ];
     }
+
+    /**
+     * Configure the factory to add the pusher_channel after creation.
+     */
+    public function configure(): static
+    {
+        return $this->afterCreating(function (GroupChat $groupChat) {
+            // Set the pusher_channel based on the user's ID
+            $groupChat->group_pusher_channel = 'group-' . $groupChat->id;
+            $groupChat->save();
+        });
+    }
 }

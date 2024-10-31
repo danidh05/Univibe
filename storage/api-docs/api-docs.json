@@ -1,0 +1,1101 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "My First API Documentation",
+        "contact": {
+            "email": "info@yeagger.com"
+        },
+        "version": "0.1"
+    },
+    "servers": [
+        {
+            "url": "https://foo.localhost:8000/api/",
+            "description": "Learning env"
+        }
+    ],
+    "paths": {
+        "/user/follow": {
+            "post": {
+                "tags": [
+                    "Follow"
+                ],
+                "summary": "Follow a user",
+                "operationId": "501c38346ee36477d2a2b04fea842676",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "user_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/user/unfollow": {
+            "post": {
+                "tags": [
+                    "Follow"
+                ],
+                "summary": "Unfollow a user",
+                "operationId": "cbb297cddc01ede261b3f2b595cf8ed1",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "user_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "404": {
+                        "description": "Not found, You are not following that user"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/user/is_following/{user_id}": {
+            "get": {
+                "tags": [
+                    "Follow"
+                ],
+                "summary": "Check if you are following the specified user",
+                "operationId": "11ad45c996914083bb7b30a719b6db4e",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/user/is_followed/{user_id}": {
+            "get": {
+                "tags": [
+                    "Follow"
+                ],
+                "summary": "Check if you are followed by the specified user",
+                "operationId": "52124d1072957ca63e700c4e49d33c33",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/user/get_follower_list": {
+            "get": {
+                "tags": [
+                    "Follow"
+                ],
+                "summary": "Gets you a list of the users that follow you",
+                "operationId": "25ef1f2caa41a0f47439d43161004534",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/user/get_following_list": {
+            "get": {
+                "tags": [
+                    "Follow"
+                ],
+                "summary": "Gets you a list of the users you follow",
+                "operationId": "fa5221ac496cb0fd870ca736432f9633",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/user/send_friend_request": {
+            "post": {
+                "tags": [
+                    "Friend"
+                ],
+                "summary": "Send a friend request to a user",
+                "operationId": "4089ca3e26f315b9981a5b5aa6ceb6b0",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "user_id"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Other errors/conflicts, already friend, already sent friend request, pending friend request from said user, sending friend request to yourself"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/user/accept_friend_request": {
+            "post": {
+                "tags": [
+                    "Friend"
+                ],
+                "summary": "Accept a friend request",
+                "operationId": "b41d6cc28197bb091aba7a49f9059739",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "request_id"
+                                ],
+                                "properties": {
+                                    "request_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "403": {
+                        "description": "Unauthorized action"
+                    },
+                    "422": {
+                        "description": "Validation failed"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/user/reject_friend_request": {
+            "post": {
+                "tags": [
+                    "Friend"
+                ],
+                "summary": "Reject a friend request",
+                "operationId": "3bdde88052e5fe80c998d557a8d38490",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "request_id"
+                                ],
+                                "properties": {
+                                    "request_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "403": {
+                        "description": "Unauthorized action"
+                    },
+                    "422": {
+                        "description": "Validation failed"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/user/cancel_friend_request": {
+            "post": {
+                "tags": [
+                    "Friend"
+                ],
+                "summary": "Cancel a friend request",
+                "operationId": "cancelFriendRequest",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "request_id"
+                                ],
+                                "properties": {
+                                    "request_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "403": {
+                        "description": "Unauthorized action"
+                    },
+                    "422": {
+                        "description": "Validation failed"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/user/remove_friend": {
+            "delete": {
+                "tags": [
+                    "Friend"
+                ],
+                "summary": "Remove a friend",
+                "operationId": "c41365ce49a095c9bdd5959db2a0926f",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "query",
+                        "description": "ID of the user to unfriend",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Other errors/conflicts, unfriending yourself, removing a user that isn't a friend"
+                    },
+                    "422": {
+                        "description": "Validation failed"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/user/get_friends_list": {
+            "get": {
+                "tags": [
+                    "Friend"
+                ],
+                "summary": "Get friends list",
+                "operationId": "e678eb536e8e3760d287c2e7ea4efde6",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/user/get_all_sent_friend_requests": {
+            "get": {
+                "tags": [
+                    "Friend"
+                ],
+                "summary": "Get all sent friend requests",
+                "operationId": "0169eafb5d1bfac37bcdb01d71bbcb6d",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/user/get_all_received_friend_requests": {
+            "get": {
+                "tags": [
+                    "Friend"
+                ],
+                "summary": "Get all received friend requests",
+                "operationId": "6be9c90c02f24eb18e791847502a0e67",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/user/is_friend/{user_id}": {
+            "get": {
+                "tags": [
+                    "Friend"
+                ],
+                "summary": "Checks if you are friends with the specified user",
+                "operationId": "cf365cd66d2cb811ac5a58f871a224f8",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "description": "The ID of the user to check friendship status",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/groups/create": {
+            "post": {
+                "tags": [
+                    "Group Chat"
+                ],
+                "summary": "Create a group",
+                "operationId": "3bf3ff3c947e63766bcb15942da42a7c",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "description": "The name of the group",
+                                        "type": "string",
+                                        "example": "My Group"
+                                    },
+                                    "photo": {
+                                        "description": "Optional group photo (jpeg, png, jpg)",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "422": {
+                        "description": "Validation failed"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/groups/get": {
+            "get": {
+                "tags": [
+                    "Group Chat"
+                ],
+                "summary": "Gets all the group chats you are in",
+                "operationId": "d0f3a720482d7232805680bfd15b2de1",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "422": {
+                        "description": "Validation failed"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/groups/update/name": {
+            "put": {
+                "tags": [
+                    "Group Chat"
+                ],
+                "summary": "Updates the name of the group chat",
+                "operationId": "034401dc079ed5c8082412595eaef9ca",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "group_chat_id"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "New Group Name"
+                                    },
+                                    "group_chat_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "422": {
+                        "description": "Validation failed"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/groups/update/photo": {
+            "put": {
+                "tags": [
+                    "Group Chat"
+                ],
+                "summary": "Updates the photo of the group chat",
+                "operationId": "fd91bc0568412bd5aac694b35fa05a46",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "photo",
+                                    "group_chat_id"
+                                ],
+                                "properties": {
+                                    "photo": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "group_chat_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "422": {
+                        "description": "Validation failed"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/groups/delete": {
+            "delete": {
+                "tags": [
+                    "Group Chat"
+                ],
+                "summary": "Deletes a group chat",
+                "operationId": "d93ab2f740f719387d887bf9f0ce562b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "group_chat_id"
+                                ],
+                                "properties": {
+                                    "group_chat_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/group/members/add": {
+            "post": {
+                "tags": [
+                    "Group Member"
+                ],
+                "summary": "Add a member to the group chat",
+                "operationId": "6804287a880d345844a8fe8608f8f48b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "user_id",
+                                    "group_chat_id"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "group_chat_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "409": {
+                        "description": "Conflict, member limit reached (max 100 members) or already member of the group"
+                    },
+                    "422": {
+                        "description": "Validation failed"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/group/members/remove": {
+            "post": {
+                "tags": [
+                    "Group Member"
+                ],
+                "summary": "Remove a member from the group chat",
+                "operationId": "c8a41d37a46e5fe9c960714b4aeaed5c",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "user_id",
+                                    "group_chat_id"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "group_chat_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "403": {
+                        "description": "Unauthorized action"
+                    },
+                    "404": {
+                        "description": "Member not found"
+                    },
+                    "422": {
+                        "description": "Validation failed"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/group/members/leave": {
+            "post": {
+                "tags": [
+                    "Group Member"
+                ],
+                "summary": "Leave the group chat",
+                "operationId": "b4f618b46bae62051b7b8237daf0db32",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "group_chat_id"
+                                ],
+                                "properties": {
+                                    "group_chat_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "403": {
+                        "description": "Unauthorized action"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/messages/send": {
+            "post": {
+                "tags": [
+                    "Private Message"
+                ],
+                "summary": "Send a private message",
+                "operationId": "3f3d935c02e46bd55272719562125836",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "receiver_id": {
+                                        "description": "The ID of the user receiving the message",
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "content": {
+                                        "description": "The content of the message",
+                                        "type": "string",
+                                        "example": "Hello, how are you?"
+                                    },
+                                    "media": {
+                                        "description": "Optional media file to send with the message",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "422": {
+                        "description": "Validation failed"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/messages/read_all_private_messages": {
+            "post": {
+                "tags": [
+                    "Private Message"
+                ],
+                "summary": "Mark all the messages between you and another user as read",
+                "operationId": "a04610037eeea240c675865df715ed48",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "user_id": {
+                                        "description": "The ID of the user whose messages are to be marked as read",
+                                        "type": "integer",
+                                        "example": 2
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "422": {
+                        "description": "Validation failed"
+                    },
+                    "404": {
+                        "description": "No messages found to update"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/messages/mark_message_delivered": {
+            "post": {
+                "tags": [
+                    "Private Message"
+                ],
+                "summary": "Mark a message of yours as delivered",
+                "operationId": "b5c85582529a836545e46223e672a58f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "message_id": {
+                                        "description": "The ID of the message to be marked as delivered",
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "403": {
+                        "description": "Unauthorized action"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/messages/get/{user_id}": {
+            "get": {
+                "tags": [
+                    "Private Message"
+                ],
+                "summary": "Retrieve all messages between the authenticated user and a specified user",
+                "operationId": "31fc4f6b8096d7b3924d71f1bb8aa260",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "description": "The ID of the user to retrieve messages with",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 2
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/messages/delete": {
+            "delete": {
+                "tags": [
+                    "Private Message"
+                ],
+                "summary": "Delete a private message",
+                "operationId": "a298fd0d2e4d572c5c8208a3f8f0a971",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "message_id": {
+                                        "description": "The ID of the message to be deleted",
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "403": {
+                        "description": "Unauthorized action"
+                    },
+                    "422": {
+                        "description": "Validation failed"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/user/update": {
+            "post": {
+                "tags": [
+                    "User Profile"
+                ],
+                "summary": "Update user profile",
+                "operationId": "e1908c55c8b3743a68b8453d679ad746",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "username"
+                                ],
+                                "properties": {
+                                    "username": {
+                                        "type": "string",
+                                        "example": "new_username"
+                                    },
+                                    "bio": {
+                                        "type": "string",
+                                        "example": "This is my new bio."
+                                    },
+                                    "profile_picture": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "422": {
+                        "description": "Validation failed"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/messages/update": {
+            "put": {
+                "tags": [
+                    "Private Message"
+                ],
+                "summary": "Update a message",
+                "operationId": "745d0b897001c65173d48739fe3c9f05",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "message_id": {
+                                        "description": "The ID of the message to be updated",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "content": {
+                                        "description": "The new content of the message",
+                                        "type": "string",
+                                        "example": "Updated message content"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "403": {
+                        "description": "Unauthorized action"
+                    },
+                    "422": {
+                        "description": "Validation failed"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Follow",
+            "description": "Follow"
+        },
+        {
+            "name": "Friend",
+            "description": "Friend"
+        },
+        {
+            "name": "Group Chat",
+            "description": "Group Chat"
+        },
+        {
+            "name": "Group Member",
+            "description": "Group Member"
+        },
+        {
+            "name": "Private Message",
+            "description": "Private Message"
+        },
+        {
+            "name": "User Profile",
+            "description": "User Profile"
+        }
+    ]
+}

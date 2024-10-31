@@ -13,6 +13,7 @@ class GroupChat extends Model
         'group_name',
         'group_photo',
         'owner_id',
+        'group_pusher_channel',
     ];
 
     public function owner()
