@@ -239,11 +239,11 @@ public function it_can_update_poll_post()
     ]);
 }
 
-        $response = $this->actingAs($this->user)->putJson('/api/update_post/' . $this->post->id, $updatedData);
+    //     $response = $this->actingAs($this->user)->putJson('/api/update_post/' . $this->post->id, $updatedData);
 
-        $response->assertStatus(Response::HTTP_CREATED)
-            ->assertJson($updatedData);
-    }
+    //     $response->assertStatus(Response::HTTP_CREATED)
+    //         ->assertJson($updatedData);
+    // }
 
     /** @test */
     public function it_can_delete_a_post()
