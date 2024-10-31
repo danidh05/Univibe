@@ -6,18 +6,6 @@ use App\Models\Internship;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-/**
- * @OA\Info(
- *     title="Univibe API",
- *     version="1.0.0",
- *     description="API documentation for Univibe project",
- *     @OA\Contact(
- *         name="Your Name",
- *         email="your.email@example.com"
- *     )
- * )
- */
-
 class InternshipController extends Controller
 {
     /**
