@@ -6,7 +6,7 @@
     <title>Pusher Test</title>
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/laravel-echo/1.11.2/echo.iife.js"></script>
-    <script>
+    {{-- <script>
         // Initialize Pusher and Laravel Echo
         var Echo = new window.Echo({
             broadcaster: 'pusher',
@@ -22,6 +22,21 @@
         channel.listen('.notification-event', function(data) {
             alert('Notification received: ' + JSON.stringify(data));
         });
+    </script> --}}
+    <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+    <script>
+  
+      // Enable pusher logging - don't include this in production
+      Pusher.logToConsole = true;
+  
+      var pusher = new Pusher('6e725091245235df09bb', {
+        cluster: 'ap2'
+      });
+  
+      var channel = pusher.subscribe('user-1');
+      channel.bind('private-message-delivered', function(data) {
+        alert(JSON.stringify(data));
+      });
     </script>
 </head>
 <body>
@@ -29,29 +44,3 @@
     <p>Try posting a comment and see the notification appear here!</p>
 </body>
 </html>
-<!DOCTYPE html>
-<head>
-  <title>Pusher Test</title>
-  <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
-  <script>
-
-    // Enable pusher logging - don't include this in production
-    Pusher.logToConsole = true;
-
-    var pusher = new Pusher('3507beec7b447a9ce08e', {
-      cluster: 'eu'
-    });
-
-    var channel = pusher.subscribe('user-1');
-    channel.bind('notification-event', function(data) {
-      alert(JSON.stringify(data));
-    });
-  </script>
-</head>
-<body>
-  <h1>Pusher Test</h1>
-  <p>
-    Try publishing an event to channel <code>my-channel</code>
-    with event name <code>my-event</code>.
-  </p>
-</body>

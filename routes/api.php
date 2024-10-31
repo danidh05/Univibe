@@ -9,6 +9,12 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\CheckGroupOwner;
 use App\Http\Controllers\GroupController;
+use App\Http\Controllers\GroupMembersController;
+use App\Http\Controllers\GroupMessageController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MessageController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\CheckGroupMember;
 use App\Http\Middleware\UserIdValidation;
 use App\Http\Controllers\RepostController;
@@ -85,6 +91,8 @@ Route::post('/login', [AuthController::class, 'login']);
 
 // Ralph
 Route::post('/messages/send', [MessageController::class, 'sendPrivateMessage']);
+Route::post('/messages/read_all_private_messages', [MessageController::class, 'readAllPrivateMessages']);
+Route::post('/messages/mark_message_delivered', [MessageController::class, 'markAsDelivered']);
 Route::get('/messages/get/{user_id}', [MessageController::class, 'getPrivateMessages']);
 Route::put('/messages/update', [MessageController::class, 'updatePrivateMessage']);
 Route::delete('/messages/delete', [MessageController::class, 'deletePrivateMessage']);
@@ -94,6 +102,11 @@ Route::get('/groups/get', [GroupController::class, 'getMyGroups']);
 Route::put('/groups/update/name', [GroupController::class, 'updateGroupName'])->middleware(CheckGroupOwner::class);
 Route::put('/groups/update/photo', [GroupController::class, 'updateGroupPhoto'])->middleware(CheckGroupOwner::class); // there's a problem with sending data in "form-data"
 Route::delete('/groups/delete', [GroupController::class, 'deleteGroup'])->middleware(CheckGroupOwner::class);
+
+Route::post('/group/messages/send', [GroupMessageController::class, 'sendGroupMessage']);
+Route::get('/group/messages/get/{group_id}', [GroupMessageController::class, 'getGroupMessages']);
+Route::delete('/group/messages/delete', [GroupMessageController::class, 'deleteGroupMessage']);
+Route::put('/group/messages/update', [GroupMessageController::class, 'updateGroupMessage']);
 
 Route::post('/group/members/add', [GroupMembersController::class, 'add'])->middleware(CheckGroupOwner::class);
 Route::post('/group/members/remove', [GroupMembersController::class, 'remove'])->middleware(CheckGroupOwner::class); // either admin removing someone or someone removing himself

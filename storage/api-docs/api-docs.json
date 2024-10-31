@@ -1,147 +1,35 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "Univibe API",
-        "description": "API documentation for Univibe.",
+        "title": "My First API Documentation",
         "contact": {
-            "email": "support@univibe.com"
+            "email": "info@yeagger.com"
         },
-        "version": "1.0.0"
+        "version": "0.1"
     },
     "servers": [
         {
-            "url": "http://localhost:8000/api",
-            "description": "API Server"
+            "url": "https://foo.localhost:8000/api/",
+            "description": "Learning env"
         }
     ],
     "paths": {
-        "/show_comment/{postId}": {
-            "get": {
-                "tags": [
-                    "Comments"
-                ],
-                "summary": "Get Comments on a Post",
-                "description": "Retrieve all comments on a specific post.",
-                "operationId": "7e7b95f02ace38c905ed26be9d5e1d45",
-                "parameters": [
-                    {
-                        "name": "postId",
-                        "in": "path",
-                        "description": "ID of the post to retrieve comments for",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully retrieved comments",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/Comment"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Post not found"
-                    }
-                }
-            }
-        },
-        "/add_comment/{postId}": {
+        "/user/follow": {
             "post": {
                 "tags": [
-                    "Comments"
+                    "Follow"
                 ],
-                "summary": "Add a Comment to a Post",
-                "description": "Add a new comment to a specific post. Sends a notification to the post owner.",
-                "operationId": "159fc40c709416052f407cb34889e035",
-                "parameters": [
-                    {
-                        "name": "postId",
-                        "in": "path",
-                        "description": "ID of the post to comment on",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
+                "summary": "Follow a user",
+                "operationId": "501c38346ee36477d2a2b04fea842676",
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "properties": {
-                                    "content": {
-                                        "description": "Content of the comment",
-                                        "type": "string",
-                                        "example": "This is a comment."
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Comment added successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Comment"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
-                    "404": {
-                        "description": "Post not found"
-                    },
-                    "500": {
-                        "description": "Failed to add comment"
-                    }
-                }
-            }
-        },
-        "/update_comment/{commentId}": {
-            "put": {
-                "tags": [
-                    "Comments"
-                ],
-                "summary": "Update a Comment",
-                "description": "Edit an existing comment. Only the original commenter can edit.",
-                "operationId": "12077b0e317759c2c92ff6c97c1c9897",
-                "parameters": [
-                    {
-                        "name": "commentId",
-                        "in": "path",
-                        "description": "ID of the comment to update",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "content": {
-                                        "description": "Updated content of the comment",
-                                        "type": "string",
-                                        "example": "This is an updated comment."
+                                    "user_id": {
+                                        "type": "integer",
+                                        "example": 1
                                     }
                                 },
                                 "type": "object"
@@ -151,286 +39,163 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Comment updated successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Comment"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
-                    "404": {
-                        "description": "Comment not found or unauthorized"
+                        "description": "Successful operation"
                     },
                     "500": {
-                        "description": "Failed to update comment"
+                        "description": "Server failure"
                     }
                 }
             }
         },
-        "/delete_comment/{commentId}": {
-            "delete": {
-                "tags": [
-                    "Comments"
-                ],
-                "summary": "Delete a Comment",
-                "description": "Delete an existing comment. Only the original commenter can delete.",
-                "operationId": "07b170e47e60ac93d50c9a3b867060b4",
-                "parameters": [
-                    {
-                        "name": "commentId",
-                        "in": "path",
-                        "description": "ID of the comment to delete",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Comment deleted successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Comment deleted successfully"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    },
-                    "403": {
-                        "description": "Comment not found or unauthorized"
-                    },
-                    "500": {
-                        "description": "Failed to delete comment"
-                    }
-                }
-            }
-        },
-        "/like_post/{postId}": {
+        "/user/unfollow": {
             "post": {
                 "tags": [
-                    "Likes"
+                    "Follow"
                 ],
-                "summary": "Like or Dislike a Post",
-                "description": "Allows a user to like a post. If the post is already liked by the user, it will be disliked (unliked) instead. Also sends a notification to the post owner if liked.",
-                "operationId": "b4c9593f6fcb30c55dda67471071314e",
-                "parameters": [
-                    {
-                        "name": "postId",
-                        "in": "path",
-                        "description": "ID of the post to like or dislike",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully liked or disliked the post",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Post Liked and Notification Sent"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Post not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "error": {
-                                            "type": "string",
-                                            "example": "Post not found"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Failed to like/dislike post",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "error": {
-                                            "type": "string",
-                                            "example": "Failed to like/dislike post"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "An error message"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/posts/{post}": {
-            "get": {
-                "tags": [
-                    "Posts"
-                ],
-                "summary": "Get a single post",
-                "description": "Retrieve details of a single post by its ID",
-                "operationId": "19d7b55d7d5efd7bc27ed7c01d74ca95",
-                "parameters": [
-                    {
-                        "name": "post",
-                        "in": "path",
-                        "description": "ID of the post",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful retrieval",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "title": {
-                                            "type": "string"
-                                        },
-                                        "content": {
-                                            "type": "string"
-                                        },
-                                        "created_at": {
-                                            "type": "string",
-                                            "format": "date"
-                                        },
-                                        "author": {
-                                            "type": "string"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Post not found"
-                    }
-                }
-            }
-        },
-        "/show_posts": {
-            "get": {
-                "tags": [
-                    "Posts"
-                ],
-                "summary": "Get list of posts",
-                "description": "Retrieve a list of all posts in descending order of creation",
-                "operationId": "bde68f350864604b0fcc1e14cbbc03c5",
-                "responses": {
-                    "200": {
-                        "description": "Successful retrieval"
-                    },
-                    "500": {
-                        "description": "Failed to retrieve posts"
-                    }
-                }
-            }
-        },
-        "/add_post": {
-            "post": {
-                "tags": [
-                    "Posts"
-                ],
-                "summary": "Create a new post",
-                "description": "Create a new post and optionally add poll options if the postType is 'poll'. The 'poll_options' field is only required and enabled when 'postType' is 'poll'.",
-                "operationId": "4a04abeeaa923552bef8a30a223dc2a4",
+                "summary": "Unfollow a user",
+                "operationId": "cbb297cddc01ede261b3f2b595cf8ed1",
                 "requestBody": {
-                    "description": "Post object that needs to be added",
                     "required": true,
                     "content": {
-                        "multipart/form-data": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "user_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "404": {
+                        "description": "Not found, You are not following that user"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/user/is_following/{user_id}": {
+            "get": {
+                "tags": [
+                    "Follow"
+                ],
+                "summary": "Check if you are following the specified user",
+                "operationId": "11ad45c996914083bb7b30a719b6db4e",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/user/is_followed/{user_id}": {
+            "get": {
+                "tags": [
+                    "Follow"
+                ],
+                "summary": "Check if you are followed by the specified user",
+                "operationId": "52124d1072957ca63e700c4e49d33c33",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/user/get_follower_list": {
+            "get": {
+                "tags": [
+                    "Follow"
+                ],
+                "summary": "Gets you a list of the users that follow you",
+                "operationId": "25ef1f2caa41a0f47439d43161004534",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/user/get_following_list": {
+            "get": {
+                "tags": [
+                    "Follow"
+                ],
+                "summary": "Gets you a list of the users you follow",
+                "operationId": "fa5221ac496cb0fd870ca736432f9633",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/user/send_friend_request": {
+            "post": {
+                "tags": [
+                    "Friend"
+                ],
+                "summary": "Send a friend request to a user",
+                "operationId": "4089ca3e26f315b9981a5b5aa6ceb6b0",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
                             "schema": {
                                 "required": [
-                                    "title",
-                                    "content",
-                                    "postType",
                                     "user_id"
                                 ],
                                 "properties": {
-                                    "title": {
-                                        "description": "Title of the post",
-                                        "type": "string",
-                                        "example": "New Post Title"
-                                    },
-                                    "content": {
-                                        "description": "Content of the post",
-                                        "type": "string",
-                                        "example": "This is the content of the post."
-                                    },
-                                    "postType": {
-                                        "description": "The type of post (e.g., text, image, video, poll). If 'poll', you need to provide poll options.",
-                                        "type": "string",
-                                        "enum": [
-                                            "text",
-                                            "image",
-                                            "video",
-                                            "poll"
-                                        ],
-                                        "example": "poll"
-                                    },
-                                    "poll_options": {
-                                        "description": "Options for the poll. Only required if 'postType' is 'poll'.",
-                                        "type": "array",
-                                        "items": {
-                                            "type": "string"
-                                        },
-                                        "example": [
-                                            "Option 1",
-                                            "Option 2"
-                                        ]
-                                    },
                                     "user_id": {
-                                        "description": "ID of the user creating the post.",
                                         "type": "integer",
-                                        "example": 1
-                                    },
-                                    "image": {
-                                        "description": "Image file for the post if postType is 'image'.",
-                                        "type": "file",
-                                        "format": "binary"
-                                    },
-                                    "video": {
-                                        "description": "Video file for the post if postType is 'video'.",
-                                        "type": "file",
-                                        "format": "binary"
+                                        "example": 2
                                     }
                                 },
                                 "type": "object"
@@ -439,102 +204,40 @@
                     }
                 },
                 "responses": {
-                    "201": {
-                        "description": "Post created",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Post"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Failed to create post"
-                    }
-                }
-            }
-        },
-        "/show_user_post/{id}": {
-            "get": {
-                "tags": [
-                    "Posts"
-                ],
-                "summary": "Get posts by user",
-                "description": "Retrieve all posts made by a specific user",
-                "operationId": "5b841f0f9aba66ae8963d18620750943",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID of the user",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
                     "200": {
-                        "description": "List of user's posts"
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Other errors/conflicts, already friend, already sent friend request, pending friend request from said user, sending friend request to yourself"
                     },
                     "404": {
-                        "description": "User or posts not found"
+                        "description": "User not found"
+                    },
+                    "500": {
+                        "description": "Server failure"
                     }
                 }
             }
         },
-        "/update_post/{id}": {
-            "put": {
+        "/user/accept_friend_request": {
+            "post": {
                 "tags": [
-                    "Posts"
+                    "Friend"
                 ],
-                "summary": "Update a post",
-                "description": "Update an existing post and optionally update poll options if it's a poll",
-                "operationId": "211ac421c31ca8e9a5841367086f7a9a",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID of the post to update",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
+                "summary": "Accept a friend request",
+                "operationId": "b41d6cc28197bb091aba7a49f9059739",
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "title",
-                                    "content"
+                                    "request_id"
                                 ],
                                 "properties": {
-                                    "title": {
-                                        "type": "string",
-                                        "example": "Updated Post Title"
-                                    },
-                                    "content": {
-                                        "type": "string",
-                                        "example": "Updated content of the post"
-                                    },
-                                    "postType": {
-                                        "type": "string",
-                                        "example": "poll"
-                                    },
-                                    "poll": {
-                                        "properties": {
-                                            "options": {
-                                                "type": "array",
-                                                "items": {
-                                                    "type": "string"
-                                                }
-                                            }
-                                        },
-                                        "type": "object"
+                                    "request_id": {
+                                        "type": "integer",
+                                        "example": 1
                                     }
                                 },
                                 "type": "object"
@@ -544,336 +247,116 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Post updated"
-                    },
-                    "404": {
-                        "description": "Post not found"
-                    },
-                    "500": {
-                        "description": "Failed to update post"
-                    }
-                }
-            }
-        },
-        "/delete_post/{id}": {
-            "delete": {
-                "tags": [
-                    "Posts"
-                ],
-                "summary": "Delete a post",
-                "description": "Delete an existing post by its ID",
-                "operationId": "aad6523f176738062eef27bf8198e89b",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID of the post to delete",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "Post deleted successfully"
-                    },
-                    "404": {
-                        "description": "Post not found"
-                    },
-                    "500": {
-                        "description": "Failed to delete post"
-                    }
-                }
-            }
-        },
-        "/posts/{id}/repost": {
-            "post": {
-                "tags": [
-                    "Repost"
-                ],
-                "summary": "Repost a post",
-                "description": "Allows the authenticated user to repost a specific post. The user cannot repost their own post or repost the same post more than once.",
-                "operationId": "55a98752be5182d3db95ae19688418bf",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID of the post to repost",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Post reposted successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Post reposted successfully"
-                                        },
-                                        "original_post": {
-                                            "$ref": "#/components/schemas/Post"
-                                        },
-                                        "original_poster": {
-                                            "$ref": "#/components/schemas/User"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "Successful operation"
                     },
                     "403": {
-                        "description": "User cannot repost their own post",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "You cannot repost your own post"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "Unauthorized action"
                     },
-                    "404": {
-                        "description": "Post not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Post not found"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "409": {
-                        "description": "Duplicate repost",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "You have already reposted this post"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                    "422": {
+                        "description": "Validation failed"
                     },
                     "500": {
-                        "description": "Server error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "error": {
-                                            "type": "string",
-                                            "example": "An unexpected error occurred."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "tags": [
-                    "Repost"
-                ],
-                "summary": "Delete a repost",
-                "description": "Allows the authenticated user to delete their repost of a specific post.",
-                "operationId": "c65d853f5f7c44101c16a251121e15ac",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "ID of the post to remove repost",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Repost deleted successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Repost deleted successfully"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Repost not found or not authorized to delete",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Repost not found or not authorized to delete"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Server error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "error": {
-                                            "type": "string",
-                                            "example": "An unexpected error occurred."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "Server failure"
                     }
                 }
             }
         },
-        "/save_post/{postId}": {
+        "/user/reject_friend_request": {
             "post": {
                 "tags": [
-                    "SavedPosts"
+                    "Friend"
                 ],
-                "summary": "Save a post",
-                "description": "Save a post to the user's saved posts list",
-                "operationId": "6d4127027b419921decdc69b041a8d53",
-                "parameters": [
-                    {
-                        "name": "postId",
-                        "in": "path",
-                        "description": "ID of the post to save",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Post saved successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Post saved successfully"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Failed to save post",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Error message"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/get_save_post": {
-            "get": {
-                "tags": [
-                    "SavedPosts"
-                ],
-                "summary": "Get all saved posts",
-                "description": "Retrieve all posts saved by the authenticated user",
-                "operationId": "22b489a22003fb5af497298cc0228571",
-                "responses": {
-                    "200": {
-                        "description": "List of saved posts",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/SavePost"
+                "summary": "Reject a friend request",
+                "operationId": "3bdde88052e5fe80c998d557a8d38490",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "request_id"
+                                ],
+                                "properties": {
+                                    "request_id": {
+                                        "type": "integer",
+                                        "example": 1
                                     }
-                                }
+                                },
+                                "type": "object"
                             }
                         }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "403": {
+                        "description": "Unauthorized action"
+                    },
+                    "422": {
+                        "description": "Validation failed"
                     },
                     "500": {
-                        "description": "Failed to retrieve saved posts",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Error message"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "Server failure"
                     }
                 }
             }
         },
-        "/delete_save_post/{postId}": {
+        "/user/cancel_friend_request": {
+            "post": {
+                "tags": [
+                    "Friend"
+                ],
+                "summary": "Cancel a friend request",
+                "operationId": "cancelFriendRequest",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "request_id"
+                                ],
+                                "properties": {
+                                    "request_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "403": {
+                        "description": "Unauthorized action"
+                    },
+                    "422": {
+                        "description": "Validation failed"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/user/remove_friend": {
             "delete": {
                 "tags": [
-                    "SavedPosts"
+                    "Friend"
                 ],
-                "summary": "Delete a saved post",
-                "description": "Remove a post from the user's saved posts list",
-                "operationId": "30b271f1e996ce44a44f610e98e1606e",
+                "summary": "Remove a friend",
+                "operationId": "c41365ce49a095c9bdd5959db2a0926f",
                 "parameters": [
                     {
-                        "name": "postId",
-                        "in": "path",
-                        "description": "ID of the post to delete from saved posts",
+                        "name": "user_id",
+                        "in": "query",
+                        "description": "ID of the user to unfriend",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -882,251 +365,124 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Post deleted from saved list successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Post deleted from saved list successfully"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Post not found in saved list",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Post not found in saved list"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Failed to delete saved post",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Error message"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/search": {
-            "get": {
-                "tags": [
-                    "Search"
-                ],
-                "summary": "Search across users, majors, and universities",
-                "description": "Allows users to search by a term across multiple resources, including users by username or bio, majors by name, and universities by name or location.",
-                "operationId": "4724040b63b941e77f510ebfaf0d95a1",
-                "parameters": [
-                    {
-                        "name": "query",
-                        "in": "query",
-                        "description": "Search term used to query users, majors, and universities",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "example": "engineering"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful search results",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "users": {
-                                            "type": "array",
-                                            "items": {
-                                                "properties": {
-                                                    "id": {
-                                                        "type": "integer",
-                                                        "example": 1
-                                                    },
-                                                    "username": {
-                                                        "type": "string",
-                                                        "example": "johndoe"
-                                                    },
-                                                    "bio": {
-                                                        "type": "string",
-                                                        "example": "Avid reader and nature enthusiast."
-                                                    },
-                                                    "created_at": {
-                                                        "type": "string",
-                                                        "format": "date-time",
-                                                        "example": "2022-01-01T12:00:00Z"
-                                                    },
-                                                    "updated_at": {
-                                                        "type": "string",
-                                                        "format": "date-time",
-                                                        "example": "2022-01-02T12:00:00Z"
-                                                    }
-                                                },
-                                                "type": "object"
-                                            }
-                                        },
-                                        "majors": {
-                                            "type": "array",
-                                            "items": {
-                                                "properties": {
-                                                    "id": {
-                                                        "type": "integer",
-                                                        "example": 1
-                                                    },
-                                                    "major_name": {
-                                                        "type": "string",
-                                                        "example": "Computer Science"
-                                                    },
-                                                    "created_at": {
-                                                        "type": "string",
-                                                        "format": "date-time",
-                                                        "example": "2022-01-01T12:00:00Z"
-                                                    },
-                                                    "updated_at": {
-                                                        "type": "string",
-                                                        "format": "date-time",
-                                                        "example": "2022-01-02T12:00:00Z"
-                                                    }
-                                                },
-                                                "type": "object"
-                                            }
-                                        },
-                                        "universities": {
-                                            "type": "array",
-                                            "items": {
-                                                "properties": {
-                                                    "id": {
-                                                        "type": "integer",
-                                                        "example": 1
-                                                    },
-                                                    "university_name": {
-                                                        "type": "string",
-                                                        "example": "Harvard University"
-                                                    },
-                                                    "location": {
-                                                        "type": "string",
-                                                        "example": "Cambridge, MA"
-                                                    },
-                                                    "created_at": {
-                                                        "type": "string",
-                                                        "format": "date-time",
-                                                        "example": "2022-01-01T12:00:00Z"
-                                                    },
-                                                    "updated_at": {
-                                                        "type": "string",
-                                                        "format": "date-time",
-                                                        "example": "2022-01-02T12:00:00Z"
-                                                    }
-                                                },
-                                                "type": "object"
-                                            }
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "Successful operation"
                     },
                     "400": {
-                        "description": "No Data Found - No search term provided",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "error": {
-                                            "type": "string",
-                                            "example": "No Data Found"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "Other errors/conflicts, unfriending yourself, removing a user that isn't a friend"
+                    },
+                    "422": {
+                        "description": "Validation failed"
                     },
                     "500": {
-                        "description": "Server error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "error": {
-                                            "type": "string",
-                                            "example": "An error occurred while processing your request."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "Server failure"
                     }
                 }
             }
         },
-        "/posts/{postId}/share-user": {
-            "post": {
+        "/user/get_friends_list": {
+            "get": {
                 "tags": [
-                    "SharePost"
+                    "Friend"
                 ],
-                "summary": "Share a post with specific users",
-                "description": "Allows the authenticated user to share a post with specific users, to a feed, or by generating a link.",
-                "operationId": "ab86d4ae8c4ab4d50b151061b76430fb",
+                "summary": "Get friends list",
+                "operationId": "e678eb536e8e3760d287c2e7ea4efde6",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/user/get_all_sent_friend_requests": {
+            "get": {
+                "tags": [
+                    "Friend"
+                ],
+                "summary": "Get all sent friend requests",
+                "operationId": "0169eafb5d1bfac37bcdb01d71bbcb6d",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/user/get_all_received_friend_requests": {
+            "get": {
+                "tags": [
+                    "Friend"
+                ],
+                "summary": "Get all received friend requests",
+                "operationId": "6be9c90c02f24eb18e791847502a0e67",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/user/is_friend/{user_id}": {
+            "get": {
+                "tags": [
+                    "Friend"
+                ],
+                "summary": "Checks if you are friends with the specified user",
+                "operationId": "cf365cd66d2cb811ac5a58f871a224f8",
                 "parameters": [
                     {
-                        "name": "postId",
+                        "name": "user_id",
                         "in": "path",
-                        "description": "ID of the post to share",
+                        "description": "The ID of the user to check friendship status",
                         "required": true,
                         "schema": {
                             "type": "integer"
                         }
                     }
                 ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/groups/create": {
+            "post": {
+                "tags": [
+                    "Group Chat"
+                ],
+                "summary": "Create a group",
+                "operationId": "3bf3ff3c947e63766bcb15942da42a7c",
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "properties": {
-                                    "recipient_id": {
-                                        "description": "Array of recipient user IDs for sharing with specific users",
-                                        "type": "array",
-                                        "items": {
-                                            "type": "integer"
-                                        }
-                                    },
-                                    "share_type": {
-                                        "description": "The type of share (user, feed, or link)",
+                                    "name": {
+                                        "description": "The name of the group",
                                         "type": "string",
-                                        "enum": [
-                                            "user",
-                                            "feed",
-                                            "link"
-                                        ],
-                                        "example": "user"
+                                        "example": "My Group"
+                                    },
+                                    "photo": {
+                                        "description": "Optional group photo (jpeg, png, jpg)",
+                                        "type": "string",
+                                        "format": "binary"
                                     }
                                 },
                                 "type": "object"
@@ -1136,325 +492,610 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Post shared successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Post shared successfully."
-                                        },
-                                        "post_link": {
-                                            "type": "string",
-                                            "example": "http://example.com/posts/1"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "Successful operation"
                     },
                     "422": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "errors": {
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Post not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Post not found"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "Validation failed"
                     },
                     "500": {
-                        "description": "Server error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "error": {
-                                            "type": "string",
-                                            "example": "An unexpected error occurred."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "Server failure"
                     }
                 }
             }
         },
-        "/posts/{postId}/copy-link": {
+        "/groups/get": {
             "get": {
                 "tags": [
-                    "SharePost"
+                    "Group Chat"
                 ],
-                "summary": "Copy the link of a post",
-                "description": "Generates a shareable link for a specific post.",
-                "operationId": "d306295257ddf962f3a6cc6df661c2b0",
+                "summary": "Gets all the group chats you are in",
+                "operationId": "d0f3a720482d7232805680bfd15b2de1",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "422": {
+                        "description": "Validation failed"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/groups/update/name": {
+            "put": {
+                "tags": [
+                    "Group Chat"
+                ],
+                "summary": "Updates the name of the group chat",
+                "operationId": "034401dc079ed5c8082412595eaef9ca",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "group_chat_id"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "New Group Name"
+                                    },
+                                    "group_chat_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "422": {
+                        "description": "Validation failed"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/groups/update/photo": {
+            "put": {
+                "tags": [
+                    "Group Chat"
+                ],
+                "summary": "Updates the photo of the group chat",
+                "operationId": "fd91bc0568412bd5aac694b35fa05a46",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "photo",
+                                    "group_chat_id"
+                                ],
+                                "properties": {
+                                    "photo": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "group_chat_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "422": {
+                        "description": "Validation failed"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/groups/delete": {
+            "delete": {
+                "tags": [
+                    "Group Chat"
+                ],
+                "summary": "Deletes a group chat",
+                "operationId": "d93ab2f740f719387d887bf9f0ce562b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "group_chat_id"
+                                ],
+                                "properties": {
+                                    "group_chat_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/group/members/add": {
+            "post": {
+                "tags": [
+                    "Group Member"
+                ],
+                "summary": "Add a member to the group chat",
+                "operationId": "6804287a880d345844a8fe8608f8f48b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "user_id",
+                                    "group_chat_id"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "group_chat_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "409": {
+                        "description": "Conflict, member limit reached (max 100 members) or already member of the group"
+                    },
+                    "422": {
+                        "description": "Validation failed"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/group/members/remove": {
+            "post": {
+                "tags": [
+                    "Group Member"
+                ],
+                "summary": "Remove a member from the group chat",
+                "operationId": "c8a41d37a46e5fe9c960714b4aeaed5c",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "user_id",
+                                    "group_chat_id"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "group_chat_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "403": {
+                        "description": "Unauthorized action"
+                    },
+                    "404": {
+                        "description": "Member not found"
+                    },
+                    "422": {
+                        "description": "Validation failed"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/group/members/leave": {
+            "post": {
+                "tags": [
+                    "Group Member"
+                ],
+                "summary": "Leave the group chat",
+                "operationId": "b4f618b46bae62051b7b8237daf0db32",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "group_chat_id"
+                                ],
+                                "properties": {
+                                    "group_chat_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "403": {
+                        "description": "Unauthorized action"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/messages/send": {
+            "post": {
+                "tags": [
+                    "Private Message"
+                ],
+                "summary": "Send a private message",
+                "operationId": "3f3d935c02e46bd55272719562125836",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "receiver_id": {
+                                        "description": "The ID of the user receiving the message",
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "content": {
+                                        "description": "The content of the message",
+                                        "type": "string",
+                                        "example": "Hello, how are you?"
+                                    },
+                                    "media": {
+                                        "description": "Optional media file to send with the message",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "422": {
+                        "description": "Validation failed"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/messages/read_all_private_messages": {
+            "post": {
+                "tags": [
+                    "Private Message"
+                ],
+                "summary": "Mark all the messages between you and another user as read",
+                "operationId": "a04610037eeea240c675865df715ed48",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "user_id": {
+                                        "description": "The ID of the user whose messages are to be marked as read",
+                                        "type": "integer",
+                                        "example": 2
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "422": {
+                        "description": "Validation failed"
+                    },
+                    "404": {
+                        "description": "No messages found to update"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/messages/mark_message_delivered": {
+            "post": {
+                "tags": [
+                    "Private Message"
+                ],
+                "summary": "Mark a message of yours as delivered",
+                "operationId": "b5c85582529a836545e46223e672a58f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "message_id": {
+                                        "description": "The ID of the message to be marked as delivered",
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "403": {
+                        "description": "Unauthorized action"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/messages/get/{user_id}": {
+            "get": {
+                "tags": [
+                    "Private Message"
+                ],
+                "summary": "Retrieve all messages between the authenticated user and a specified user",
+                "operationId": "31fc4f6b8096d7b3924d71f1bb8aa260",
                 "parameters": [
                     {
-                        "name": "postId",
+                        "name": "user_id",
                         "in": "path",
-                        "description": "ID of the post to generate a link for",
+                        "description": "The ID of the user to retrieve messages with",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "integer",
+                            "example": 2
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Link generated successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Post link generated successfully."
-                                        },
-                                        "post_link": {
-                                            "type": "string",
-                                            "example": "http://example.com/posts/1"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "Successful operation"
                     },
                     "404": {
-                        "description": "Post not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "error": {
-                                            "type": "string",
-                                            "example": "Post not found"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "User not found"
                     },
                     "500": {
-                        "description": "Server error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "error": {
-                                            "type": "string",
-                                            "example": "An error occurred while generating the post link"
-                                        },
-                                        "details": {
-                                            "type": "string",
-                                            "example": "Detailed error message"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
+                        "description": "Server failure"
                     }
                 }
             }
-        }
-    },
-    "components": {
-        "schemas": {
-            "Comment": {
-                "title": "Comment",
-                "description": "A comment made on a post",
-                "properties": {
-                    "id": {
-                        "description": "Unique identifier for the comment",
-                        "type": "integer"
-                    },
-                    "post_id": {
-                        "description": "ID of the post the comment belongs to",
-                        "type": "integer"
-                    },
-                    "user_id": {
-                        "description": "ID of the user who made the comment",
-                        "type": "integer"
-                    },
+        },
+        "/messages/delete": {
+            "delete": {
+                "tags": [
+                    "Private Message"
+                ],
+                "summary": "Delete a private message",
+                "operationId": "a298fd0d2e4d572c5c8208a3f8f0a971",
+                "requestBody": {
+                    "required": true,
                     "content": {
-                        "description": "Content of the comment",
-                        "type": "string"
-                    },
-                    "created_at": {
-                        "description": "Date and time when the comment was created",
-                        "type": "string",
-                        "format": "date-time"
-                    },
-                    "updated_at": {
-                        "description": "Date and time when the comment was last updated",
-                        "type": "string",
-                        "format": "date-time"
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "message_id": {
+                                        "description": "The ID of the message to be deleted",
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
                     }
                 },
-                "type": "object"
-            },
-            "Post": {
-                "title": "Post",
-                "description": "A model representing a blog post",
-                "properties": {
-                    "id": {
-                        "description": "Unique identifier for the post",
-                        "type": "integer"
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
                     },
-                    "title": {
-                        "description": "Title of the post",
-                        "type": "string"
+                    "403": {
+                        "description": "Unauthorized action"
                     },
-                    "content": {
-                        "description": "Content of the post",
-                        "type": "string"
+                    "422": {
+                        "description": "Validation failed"
                     },
-                    "postType": {
-                        "description": "Type of the post (e.g., normal, poll)",
-                        "type": "string"
-                    },
-                    "created_at": {
-                        "description": "Date and time when the post was created",
-                        "type": "string",
-                        "format": "date-time"
-                    },
-                    "updated_at": {
-                        "description": "Date and time when the post was last updated",
-                        "type": "string",
-                        "format": "date-time"
-                    },
-                    "author": {
-                        "description": "Author of the post",
-                        "type": "string"
+                    "500": {
+                        "description": "Server failure"
                     }
-                },
-                "type": "object"
-            },
-            "User": {
-                "title": "User",
-                "description": "User model",
-                "properties": {
-                    "id": {
-                        "description": "ID of the user",
-                        "type": "integer"
-                    },
-                    "name": {
-                        "description": "Name of the user",
-                        "type": "string"
-                    },
-                    "email": {
-                        "description": "Email of the user",
-                        "type": "string",
-                        "format": "email"
-                    },
-                    "created_at": {
-                        "description": "Timestamp when the user was created",
-                        "type": "string",
-                        "format": "date-time"
-                    },
-                    "updated_at": {
-                        "description": "Timestamp when the user was last updated",
-                        "type": "string",
-                        "format": "date-time"
-                    }
-                },
-                "type": "object"
-            },
-            "SavePost": {
-                "title": "SavePost",
-                "description": "A saved post by the user",
-                "properties": {
-                    "id": {
-                        "description": "Unique identifier of the saved post",
-                        "type": "integer"
-                    },
-                    "post_id": {
-                        "description": "ID of the original post",
-                        "type": "integer"
-                    },
-                    "user_id": {
-                        "description": "ID of the user who saved the post",
-                        "type": "integer"
-                    },
-                    "created_at": {
-                        "description": "Date and time when the post was saved",
-                        "type": "string",
-                        "format": "date-time"
-                    },
-                    "updated_at": {
-                        "description": "Date and time when the post was last updated",
-                        "type": "string",
-                        "format": "date-time"
-                    }
-                },
-                "type": "object"
+                }
             }
         },
-        "securitySchemes": {
-            "bearerAuth": {
-                "type": "http",
-                "name": "Authorization",
-                "in": "header",
-                "bearerFormat": "JWT",
-                "scheme": "bearer"
+        "/user/update": {
+            "post": {
+                "tags": [
+                    "User Profile"
+                ],
+                "summary": "Update user profile",
+                "operationId": "e1908c55c8b3743a68b8453d679ad746",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "username"
+                                ],
+                                "properties": {
+                                    "username": {
+                                        "type": "string",
+                                        "example": "new_username"
+                                    },
+                                    "bio": {
+                                        "type": "string",
+                                        "example": "This is my new bio."
+                                    },
+                                    "profile_picture": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "422": {
+                        "description": "Validation failed"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
+            }
+        },
+        "/messages/update": {
+            "put": {
+                "tags": [
+                    "Private Message"
+                ],
+                "summary": "Update a message",
+                "operationId": "745d0b897001c65173d48739fe3c9f05",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "message_id": {
+                                        "description": "The ID of the message to be updated",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "content": {
+                                        "description": "The new content of the message",
+                                        "type": "string",
+                                        "example": "Updated message content"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "403": {
+                        "description": "Unauthorized action"
+                    },
+                    "422": {
+                        "description": "Validation failed"
+                    },
+                    "500": {
+                        "description": "Server failure"
+                    }
+                }
             }
         }
     },
     "tags": [
         {
-            "name": "Comments",
-            "description": "Comments"
+            "name": "Follow",
+            "description": "Follow"
         },
         {
-            "name": "Likes",
-            "description": "Likes"
+            "name": "Friend",
+            "description": "Friend"
         },
         {
-            "name": "Posts",
-            "description": "Posts"
+            "name": "Group Chat",
+            "description": "Group Chat"
         },
         {
-            "name": "Repost",
-            "description": "Repost"
+            "name": "Group Member",
+            "description": "Group Member"
         },
         {
-            "name": "SavedPosts",
-            "description": "SavedPosts"
+            "name": "Private Message",
+            "description": "Private Message"
         },
         {
-            "name": "Search",
-            "description": "Search"
-        },
-        {
-            "name": "SharePost",
-            "description": "SharePost"
+            "name": "User Profile",
+            "description": "User Profile"
         }
     ]
 }

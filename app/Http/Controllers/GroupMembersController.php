@@ -8,6 +8,27 @@ use Illuminate\Support\Facades\Auth;
 
 class GroupMembersController extends Controller
 {
+    /**
+     * @OA\PathItem(
+     *     path="/group/members/add",
+     *     @OA\Post(
+     *         summary="Add a member to the group chat",
+     *         tags={"Group Member"},
+     *         @OA\Response(response=200, description="Successful operation"),
+     *         @OA\Response(response=409, description="Conflict, member limit reached (max 100 members) or already member of the group"),
+     *         @OA\Response(response=422, description="Validation failed"),
+     *         @OA\Response(response=500, description="Server failure"),
+     *         @OA\RequestBody(
+     *             required=true,
+     *             @OA\JsonContent(
+     *                 required={"user_id", "group_chat_id"},
+     *                 @OA\Property(property="user_id", type="integer", example=1),
+     *                 @OA\Property(property="group_chat_id", type="integer", example=1)
+     *             )
+     *         )
+     *     )
+     * )
+     */
     public function add(Request $request){
         try {
 
@@ -40,7 +61,7 @@ class GroupMembersController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Member added successfully!',
-            ], 201);
+            ], 200);
             
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Return a custom validation error response
@@ -58,6 +79,28 @@ class GroupMembersController extends Controller
         }
     }
 
+    /**
+     * @OA\PathItem(
+     *     path="/group/members/remove",
+     *     @OA\Post(
+     *         summary="Remove a member from the group chat",
+     *         tags={"Group Member"},
+     *         @OA\Response(response=200, description="Successful operation"),
+     *         @OA\Response(response=403, description="Unauthorized action"),
+     *         @OA\Response(response=404, description="Member not found"),
+     *         @OA\Response(response=422, description="Validation failed"),
+     *         @OA\Response(response=500, description="Server failure"),
+     *         @OA\RequestBody(
+     *             required=true,
+     *             @OA\JsonContent(
+     *                 required={"user_id", "group_chat_id"},
+     *                 @OA\Property(property="user_id", type="integer", example=2),
+     *                 @OA\Property(property="group_chat_id", type="integer", example=1)
+     *             )
+     *         )
+     *     )
+     * )
+     */
     public function remove(Request $request){
         try {
             $request->validate([
@@ -82,7 +125,7 @@ class GroupMembersController extends Controller
                 return response()->json([
                     'success' => false,
                     'message' => 'User is not a member of this group.'
-                ], 410); // 410 if the resource has already been deleted
+                ], 404); // 404 if the resource has already been deleted
             }
 
             $groupChat->members()->detach($userToRemove);
@@ -90,7 +133,7 @@ class GroupMembersController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Member removed successfully!',
-            ], 201);
+            ], 200);
             
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Return a custom validation error response
@@ -108,15 +151,42 @@ class GroupMembersController extends Controller
         }
     }
 
+    /**
+     * @OA\PathItem(
+     *     path="/group/members/leave",
+     *     @OA\Post(
+     *         summary="Leave the group chat",
+     *         tags={"Group Member"},
+     *         @OA\RequestBody(
+     *             required=true,
+     *             @OA\JsonContent(
+     *                 required={"group_chat_id"},
+     *                 @OA\Property(property="group_chat_id", type="integer", example=1)
+     *             )
+     *         ),
+     *         @OA\Response(response=200, description="Successful operation"),
+     *         @OA\Response(response=403, description="Unauthorized action"),
+     *         @OA\Response(response=500, description="Server failure")
+     *     )
+     * )
+     */
     public function leave(Request $request){
         try {
             $groupChat = GroupChat::find($request->input('group_chat_id'));
+
+            if ($groupChat->owner_id == Auth::id()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You cannot leave your own group, you must delete the group.'
+                ], 403); // 403 because it is not authorized
+            }
+
             $groupChat->members()->detach(Auth::id());
 
             return response()->json([
                 'success' => true,
                 'message' => 'You have left successfully!',
-            ], 201);
+            ], 200);
             
         } catch (\Throwable $th) {
             // Return a generic error response

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "eb05b3242469a6d5d3b9776a36ba847c",
+    "content-hash": "479c5f09fad09dedaa205d1dc25c58bf",
     "packages": [
         {
             "name": "askedio/laravel5-profanity-filter",
