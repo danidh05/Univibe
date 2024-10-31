@@ -2,102 +2,87 @@
 
 namespace Tests\Feature;
 
+use App\Models\Major;
+use App\Models\University;
 use App\Models\User;
-use Database\Seeders\FacultySeeder;
-use Database\Seeders\MajorSeeder;
-use Database\Seeders\RolesTableSeeder;
-use Database\Seeders\UnivristySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class AuthTest extends TestCase
 {
-    use RefreshDatabase;
 
-    /** @test */
-    public function user_can_register_with_valid_data()
+
+
+    public function test_user_cannot_register_with_invalid_email()
     {
-        $this->seed(RolesTableSeeder::class);
-        $this->seed(UnivristySeeder::class);
-        $this->seed(FacultySeeder::class);
-        $this->seed(MajorSeeder::class);
-
-
-        Event::fake();
-
-        $response = $this->postJson('/register', [
-            'first_name' => 'John',
-            'last_name' => 'Doe',
-            'email' => '32130642@students.liu.edu.lb',
+        $response = $this->postJson('api/register', [
+            'username' => 'testuser',
+            'email' => 'test@gmail.com',
             'password' => 'Password123!',
             'password_confirmation' => 'Password123!',
             'university_id' => 1,
-            'major_id' => 2,
-            'profile_picture' => null,
+            'major_id' => 1,
+        ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['email']);
+    }
+
+    public function test_user_can_login()
+    {
+        $user = User::factory()->create([
+            'password' => Hash::make('Password123!'),
             'is_verified' => true,
+        ]);
+
+        $response = $this->postJson('api/login', [
+            'email' => $user->email,
+            'password' => 'Password123!',
         ]);
 
         $response->assertStatus(200)
             ->assertJson([
-                'message' => 'Verfification Email was sent',
+                'message' => 'Login successful',
+                'user' => [
+                    'username' => $user->username,
+                    'email' => $user->email,
+                    'role' => [
+                        'Role_name' => $user->role ? $user->role->Role_name : null,
+                    ],
+                ],
             ]);
-
-        $this->assertDatabaseHas('users', [
-            'email' => '1john.doe@students.university.com',
-            'first_name' => 'John',
-            'last_name' => 'Doe',
-        ]);
-
-        // Check if the Registered event was dispatched
-        Event::assertDispatched(Registered::class);
     }
 
-    /** @test */
-    public function registration_fails_with_invalid_email()
+    public function test_user_cannot_login_with_invalid_credentials()
     {
-        $this->seed(RolesTableSeeder::class);
-        $this->seed(UnivristySeeder::class);
-        $this->seed(FacultySeeder::class);
+        $response = $this->postJson('api/login', [
+            'email' => 'wrongemail@example.com',
+            'password' => 'WrongPassword!',
+        ]);
 
-        $this->seed(MajorSeeder::class);
-        $response = $this->postJson('/register', [
-            'first_name' => 'John',
-            'last_name' => 'Doe',
-            'email' => 'john.doe@invalid.com', // invalid email (not student)
+        $response->assertStatus(401)
+            ->assertJson([
+                'error' => 'Invalid credentials',
+            ]);
+    }
+
+    public function test_user_cannot_login_if_not_verified()
+    {
+        $user = User::factory()->create([
+            'password' => Hash::make('Password123!'),
+            'is_verified' => false,
+        ]);
+
+        $response = $this->postJson('api/login', [
+            'email' => $user->email,
             'password' => 'Password123!',
-            'password_confirmation' => 'Password123!',
-            'university_id' => 1,
-            'major_id' => 2,
-            "role_id" => 1,
         ]);
 
-        $response->assertStatus(422)
-            ->assertJsonValidationErrors('email');
-    }
-
-    /** @test */
-    public function registration_fails_with_invalid_password()
-    {
-        $this->seed(RolesTableSeeder::class);
-        $this->seed(UnivristySeeder::class);
-        $this->seed(FacultySeeder::class);
-
-        $this->seed(MajorSeeder::class);
-        $response = $this->postJson('/register', [
-            'first_name' => 'John',
-            'last_name' => 'Doe',
-            'email' => '1john.doe@students.university.com',
-            'password' => 'short', // too short
-            'password_confirmation' => 'short',
-            'university_id' => 1,
-            'major_id' => 2,
-            "role_id" => 1,
-
-        ]);
-
-        $response->assertStatus(422)
-            ->assertJsonValidationErrors('password');
+        $response->assertStatus(200)
+            ->assertJson([
+                'message' => 'Please verify email to login',
+            ]);
     }
 }

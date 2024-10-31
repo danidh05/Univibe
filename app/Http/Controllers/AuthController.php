@@ -78,8 +78,8 @@ class AuthController extends Controller
                 'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
                 "is_verified" => "boolean",
                 "is_active" => "nullable|boolean",
-                "university_id" => "integer|required",
-                "major_id" => "integer|required",
+                "university_id" => "integer|required|exists:universities,id", // Ensure university exists
+                "major_id" => "integer|required|exists:majors,id", // Ensure major exists
             ],
             [
                 'email.regex' => 'The email must be a student email.',
@@ -196,11 +196,10 @@ class AuthController extends Controller
      */
     public function logout(Request $request)
     {
-        Auth::logout(); // Log the user out
-
+        $user = $request->user();
+        Auth::logout($user);
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-
         return response()->json(['message' => 'Logged out successfully'], 200);
     }
 }

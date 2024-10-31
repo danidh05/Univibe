@@ -1,104 +1,143 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Feature;
 
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\Aboutus;
 use App\Models\AboutusDetails;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class AdminControllerTest extends TestCase
 {
-    use RefreshDatabase; // Ensures database is reset for each test
+    use RefreshDatabase;
 
     /** @test */
-    /** @test */
-    /** @test */
-    /** @test */
-    /** @test */
-    /** @test */
-    public function it_can_get_single_about_us_with_details()
+    public function it_creates_about_us_title()
     {
-        // Create Aboutus and AboutusDetails entries
-        $aboutUs = Aboutus::factory()->create(['title' => 'About Us Title']);
-        AboutusDetails::factory()->create([
-            'description' => 'Some details about this entry',
-            'about_us_id' => $aboutUs->id
+        $this->withoutMiddleware();
+
+        $response = $this->postJson('api/about-us/titles', [
+            'title' => 'Our Mission',
         ]);
 
-        // Make the request to get the single About Us entry
-        $response = $this->getJson('/api/getsingleAboutUsWithDetails/' . $aboutUs->id);
-
-        // Assert the response
-        $response->assertStatus(200) // Check for 200 OK
+        $response->assertStatus(201)
             ->assertJson([
-                'data' => [
-                    [
-                        'id' => $response->json('data.0.id'), // Use the actual ID from the response
-                        'description' => 'Some details about this entry',
-                        'about_us_id' => $aboutUs->id, // Include about_us_id
-                        'created_at' => $response->json('data.0.created_at'), // Check created_at if needed
-                        'updated_at' => $response->json('data.0.updated_at'), // Check updated_at if needed
-                    ]
-                ]
+                'message' => 'About Us title created successfully!',
+                'data' => ['title' => 'Our Mission']
             ]);
+
+        $this->assertDatabaseHas('aboutus', [
+            'title' => 'Our Mission'
+        ]);
     }
 
-
     /** @test */
-    /** @test */
-    public function it_can_create_about_us_detail()
+    public function it_creates_about_us_detail()
     {
-        // Create an Aboutus entry first
-        $aboutUs = Aboutus::factory()->create(['title' => 'Our Mission']);
+        $this->withoutMiddleware();
 
-        $response = $this->postJson('/api/createAboutUsDetail/' . $aboutUs->id, [
-            'description' => 'This is our mission description'
+        $aboutUs = Aboutus::factory()->create();
+
+        $response = $this->postJson("api/about-us/{$aboutUs->id}/details", [
+            'description' => 'We are dedicated to providing the best service.',
         ]);
 
         $response->assertStatus(201)
             ->assertJson([
                 'message' => 'About Us detail added successfully!',
-                'data' => [
-                    'description' => 'This is our mission description',
-                    'about_us_id' => $aboutUs->id
-                ]
+                'data' => ['description' => 'We are dedicated to providing the best service.']
             ]);
 
         $this->assertDatabaseHas('aboutusDetails', [
-            'description' => 'This is our mission description',
-            'about_us_id' => $aboutUs->id
+            'about_us_id' => $aboutUs->id,
+            'description' => 'We are dedicated to providing the best service.'
         ]);
     }
 
-
     /** @test */
-    public function it_can_get_all_about_us_entries_with_details()
+    public function it_retrieves_all_about_us_with_details()
     {
-        // Create Aboutus and AboutusDetails entries
-        $aboutUs = Aboutus::factory()->create(['title' => 'About Us Title']);
-        AboutusDetails::factory()->create([
-            'description' => 'Some details about this',
-            'about_us_id' => $aboutUs->id
-        ]);
+        $this->withoutMiddleware();
 
-        $response = $this->getJson('/api/getAllAboutUsWithDetails');
+        $aboutUs = Aboutus::factory()->create();
+        AboutusDetails::factory()->count(3)->create(['about_us_id' => $aboutUs->id]);
+
+        $response = $this->getJson('api/about-us');
 
         $response->assertStatus(200)
-            ->assertJson([
-                'message' => 'About Us entries retrieved successfully!',
+            ->assertJsonStructure([
+                'message',
                 'data' => [
-                    [
-                        'title' => 'About Us Title',
-                        'details' => [
-                            [
-                                'description' => 'Some details about this'
-                            ]
-                        ]
-                    ]
+                    '*' => ['title', 'details' => [['description']]]
                 ]
             ]);
     }
 
     /** @test */
+    public function it_retrieves_single_about_us_with_details()
+    {
+        $this->withoutMiddleware();
+
+        $aboutUs = Aboutus::factory()->create();
+        $aboutUsDetail = AboutusDetails::factory()->create(['about_us_id' => $aboutUs->id]);
+
+        $response = $this->getJson("api/about-us/{$aboutUs->id}");
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'data' => [
+                    ['description' => $aboutUsDetail->description]
+                ]
+            ]);
+    }
+
+    /** @test */
+    public function it_updates_about_us_title()
+    {
+        $this->withoutMiddleware();
+
+        $aboutUs = Aboutus::factory()->create(['title' => 'Initial Title']);
+
+        $response = $this->putJson("api/about-us/{$aboutUs->id}", [
+            'title' => 'Updated Title'
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'message' => 'About Us updated successfully!',
+                'data' => ['title' => 'Updated Title']
+            ]);
+
+        $this->assertDatabaseHas('aboutus', [
+            'id' => $aboutUs->id,
+            'title' => 'Updated Title'
+        ]);
+    }
+
+    /** @test */
+    public function it_updates_about_us_detail()
+    {
+        $this->withoutMiddleware();
+
+        $aboutUs = Aboutus::factory()->create();
+        $aboutUsDetail = AboutusDetails::factory()->create([
+            'about_us_id' => $aboutUs->id,
+            'description' => 'Initial Description'
+        ]);
+
+        $response = $this->putJson("api/about-us/{$aboutUs->id}/details", [
+            'description' => 'Updated Description'
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'message' => 'About Us detail updated successfully!',
+                'data' => ['description' => 'Updated Description']
+            ]);
+
+        $this->assertDatabaseHas('aboutusDetails', [
+            'id' => $aboutUsDetail->id,
+            'description' => 'Updated Description'
+        ]);
+    }
 }

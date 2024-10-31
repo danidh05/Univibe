@@ -67,6 +67,8 @@ Route::get('/email/verify/{id}/{hash}', [EmailVerficationController::class, "ver
 
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+
     Route::controller(UserController::class)->group(function () {
         Route::put('/undeactivate', "undeactivate");
         Route::put('/deactivate',  "deactivate");
