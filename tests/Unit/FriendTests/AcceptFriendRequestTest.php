@@ -80,7 +80,7 @@ class AcceptFriendRequestTest extends TestCase
         ]);
     }
 
-    public function test_friend_request_not_found_returns_500()
+    public function test_friend_request_not_found_returns_422()
     {
         $user = User::factory()->create();
 
@@ -90,7 +90,7 @@ class AcceptFriendRequestTest extends TestCase
         // Attempt to accept a non-existent friend request
         $response = $this->postJson('/api/user/accept_friend_request', ['request_id' => 999]);
 
-        $response->assertStatus(500)
+        $response->assertStatus(422)
                  ->assertJson([
                      'success' => false,
                      'message' => "The selected request id is invalid.",

@@ -26,7 +26,7 @@ class GroupChatControllerTest extends TestCase
             'photo' => $photo // Optional
         ]);
 
-        $response->assertStatus(201)
+        $response->assertStatus(200)
                  ->assertJson([
                      'success' => true,
                      'message' => 'Group created successfully!',

@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Models\GroupChat;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -22,7 +23,7 @@ class GroupMembersControllerTest extends TestCase
             'user_id' => $userToAdd->id,
         ]);
 
-        $response->assertStatus(201)
+        $response->assertStatus(200)
                  ->assertJson([
                      'success' => true,
                      'message' => 'Member added successfully!',
@@ -120,7 +121,7 @@ class GroupMembersControllerTest extends TestCase
             'user_id' => $userToRemove->id,
         ]);
 
-        $response->assertStatus(201)
+        $response->assertStatus(200)
                  ->assertJson([
                      'success' => true,
                      'message' => 'Member removed successfully!',

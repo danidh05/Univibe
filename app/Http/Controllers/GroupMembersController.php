@@ -125,7 +125,7 @@ class GroupMembersController extends Controller
                 return response()->json([
                     'success' => false,
                     'message' => 'User is not a member of this group.'
-                ], 404); // 404 if the resource has already been deleted
+                ], 410); // 404 if the resource has already been deleted
             }
 
             $groupChat->members()->detach($userToRemove);

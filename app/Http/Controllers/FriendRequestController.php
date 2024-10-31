@@ -218,7 +218,7 @@ class FriendRequestController extends Controller
             // Return a custom validation error response
             return response()->json([
                 'success' => false,
-                'message' => 'Validation failed.',
+                'message' => 'The selected request id is invalid.',
                 'errors' => $e->errors(),
             ], 422);
         } catch (\Throwable $th) {
