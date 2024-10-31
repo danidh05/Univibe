@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Major;
 use App\Models\Share;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
+use App\Models\University;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -89,12 +91,12 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->belongsTo(University::class);
     }
-  
+
     public function messagesSent()
     {
         return $this->hasMany(Message::class, 'sender_id');
     }
-    
+
     public function messagesReceived()
     {
         return $this->hasMany(Message::class, 'receiver_id');
@@ -148,7 +150,7 @@ class User extends Authenticatable implements MustVerifyEmail
         // Check mutual follows
         $following = $this->following()->where('followed_id', $userId)->where('is_friend', true)->exists();
         $followed = $this->followers()->where('follower_id', $userId)->where('is_friend', true)->exists();
-        
+
         return $following && $followed;
     }
 }

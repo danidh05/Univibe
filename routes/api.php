@@ -1,16 +1,13 @@
 <?php
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PollController;
 use App\Http\Controllers\PostController;
-use App\Http\Controllers\CommentController;
-use App\Http\Controllers\SavePostController;
-use App\Http\Controllers\SharePostController;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\EmailVerficationController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\FollowsController;
-use App\Http\Controllers\FriendRequestController;
+use App\Http\Middleware\CheckGroupOwner;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\GroupMembersController;
 use App\Http\Controllers\GroupMessageController;
@@ -19,8 +16,20 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\CheckGroupMember;
-use App\Http\Middleware\CheckGroupOwner;
 use App\Http\Middleware\UserIdValidation;
+use App\Http\Controllers\RepostController;
+use App\Http\Controllers\SearchController;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\FollowsController;
+use App\Http\Controllers\MessageController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SavePostController;
+use App\Http\Controllers\SharePostController;
+use App\Http\Controllers\GroupMembersController;
+use App\Http\Controllers\FriendRequestController;
+use App\Http\Controllers\EmailVerficationController;
+
+
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -55,8 +64,15 @@ Route::get('/get_save_post', [SavePostController::class, 'getAllSavePost']);
 Route::delete('/delete_save_post/{postId}', [SavePostController::class, 'deleteSavePost']);
 
 // {{ Share Post}}
-Route::post('/posts/{postId}/share-user', [SharePostController::class, 'ShareWithUsers'])->middleware('auth');
-Route::get('/posts/{postId}/copy-link', [SharePostController::class, 'copyLink'])->middleware('auth');
+Route::post('/posts/{postId}/share-user', [SharePostController::class, 'ShareWithUsers']);
+Route::get('/posts/{postId}/copy-link', [SharePostController::class, 'copyLink']);
+
+// {{ Repost }}
+Route::post('/posts/{id}/repost', [RepostController::class, 'repost']);
+Route::delete('/posts/{id}/repost', [RepostController::class, 'deleteRepost']);
+
+//{{ Search }}
+Route::get('/search', [SearchController::class, 'search']);
 
 
 // Ahmed

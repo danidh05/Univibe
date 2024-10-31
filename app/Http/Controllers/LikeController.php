@@ -20,6 +20,43 @@ class LikeController extends Controller
         $this->notificationService = $notificationService;
     }
 
+    /**
+     * @OA\Post(
+     *     path="/like_post/{postId}",
+     *     summary="Like or Dislike a Post",
+     *     description="Allows a user to like a post. If the post is already liked by the user, it will be disliked (unliked) instead. Also sends a notification to the post owner if liked.",
+     *     tags={"Likes"},
+     *     @OA\Parameter(
+     *         name="postId",
+     *         in="path",
+     *         description="ID of the post to like or dislike",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successfully liked or disliked the post",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Post Liked and Notification Sent")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Post not found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="Post not found")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Failed to like/dislike post",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string", example="Failed to like/dislike post"),
+     *             @OA\Property(property="message", type="string", example="An error message")
+     *         )
+     *     )
+     * )
+     */
     public function likePost($postId)
     {
         try {

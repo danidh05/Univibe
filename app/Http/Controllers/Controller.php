@@ -3,17 +3,30 @@
 namespace App\Http\Controllers;
 
 /**
- * @OA\Info(
- *     title="My First API Documentation",
- *     version="0.1",
- *      @OA\Contact(
- *          email="info@yeagger.com"
- *      ),
- * ),
- *  @OA\Server(
- *      description="Learning env",
- *      url="https://foo.localhost:8000/api/"
- *  ),
+ * @OA\OpenApi(
+ *     @OA\Info(
+ *         title="Univibe API",
+ *         version="1.0.0",
+ *         description="API documentation for Univibe.",
+ *         @OA\Contact(
+ *             email="support@univibe.com"
+ *         )
+ *     ),
+ *     @OA\Components(
+ *         @OA\SecurityScheme(
+ *             securityScheme="bearerAuth",
+ *             type="http",
+ *             scheme="bearer",
+ *             bearerFormat="JWT",
+ *             in="header",
+ *             name="Authorization"
+ *         )
+ *     ),
+ *     @OA\Server(
+ *         url=L5_SWAGGER_CONST_HOST,
+ *         description="API Server"
+ *     )
+ * )
  */
 
 abstract class Controller
