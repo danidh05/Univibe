@@ -221,29 +221,43 @@ class FollowsController extends Controller
      */
     public function get_follower_list(){
         try {
+            // Check if the user is authenticated
+            if (!Auth::check()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized. Please log in.',
+                ], 401);
+            }
+    
+            // Attempt to find the authenticated user
             $user = User::findOrFail(Auth::id());
-
+    
             // Get the list of followers
             $follows = $user->followers()->with(['follower' => function ($query) {
                 $query->select('id', 'username', 'email', 'profile_picture', 'is_active'); // Only select public fields
             }])->get();
-
+    
             // Extract the follower details
             $followers_list = $follows->map(function ($follow) {
                 return $follow->follower;
             });
-
-            // $followers_list = Auth::user()->followers();
+    
             return response()->json([
                 'success' => true,
-                'message' => 'Followers list retreived succesfully.',
+                'message' => 'Followers list retrieved successfully.',
                 'followers_list' => $followers_list,
             ], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            // User not found
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found.',
+            ], 404);
         } catch (\Throwable $th) {
             // Return a generic error response
             return response()->json([
                 'success' => false,
-                'message' => $th->getMessage(),
+                'message' => 'An error occurred: ' . $th->getMessage(),
             ], 500);
         }
     }
@@ -261,29 +275,43 @@ class FollowsController extends Controller
      */
     public function get_following_list(){
         try {
+            // Check if the user is authenticated
+            if (!Auth::check()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized. Please log in.',
+                ], 401);
+            }
+    
+            // Attempt to find the authenticated user
             $user = User::findOrFail(Auth::id());
-
+    
             // Get the list of followers
             $follows = $user->following()->with(['followed' => function ($query) {
                 $query->select('id', 'username', 'email', 'profile_picture', 'is_active'); // Only select public fields
             }])->get();
-
+    
             // Extract the follower details
             $following_list = $follows->map(function ($follow) {
                 return $follow->followed; // Assuming the 'follower' relation in Follows model points to the User model
             });
-
-            // $followers_list = Auth::user()->followers();
+    
             return response()->json([
                 'success' => true,
-                'message' => 'Following list retreived succesfully.',
+                'message' => 'Following list retrieved successfully.',
                 'following_list' => $following_list,
             ], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            // User not found
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found.',
+            ], 404);
         } catch (\Throwable $th) {
             // Return a generic error response
             return response()->json([
                 'success' => false,
-                'message' => $th->getMessage(),
+                'message' => 'An error occurred: ' . $th->getMessage(),
             ], 500);
         }
     }

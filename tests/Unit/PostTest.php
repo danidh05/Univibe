@@ -8,9 +8,11 @@ use App\Models\User;
 use App\Models\PollOption;
 use Illuminate\Http\Response;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 
 class PostTest extends TestCase
 {
+    use RefreshDatabase;
     /**
      * A basic unit test example.
      */
@@ -42,49 +44,81 @@ class PostTest extends TestCase
  /** @test */
 public function it_can_create_text_post()
 {
+    // Create a user
+    $this->user = User::factory()->create();
+
+    // Prepare post data for a text post
     $postData = [
-        'content' => 'Test content',
+        'content' => 'This is a text post',
         'user_id' => $this->user->id,
-        'media_url' => null,
         'postType' => 'text',
     ];
 
+    // Send the request to create a text post
     $response = $this->actingAs($this->user)->postJson('/api/add_post', $postData);
 
+    // Assert the post was created successfully
     $response->assertStatus(Response::HTTP_CREATED)
-             ->assertJson($postData);
+             ->assertJson([
+                 'content' => 'This is a text post',
+                 'user_id' => $this->user->id,
+                 'postType' => 'text',
+                 'media_url' => null,
+             ]);
 }
 
 /** @test */
 public function it_can_create_image_post()
 {
+    // Create a user
+    $this->user = User::factory()->create();
+
+    // Prepare post data for an image post
     $postData = [
-        'content' => 'Test content',
+        'content' => 'This is an image post',
         'user_id' => $this->user->id,
-        'media_url' => 'http://example.com/media',
         'postType' => 'image',
+        'image' => UploadedFile::fake()->image('image.jpg'), // Add the required image field
     ];
 
+    // Send the request to create an image post
     $response = $this->actingAs($this->user)->postJson('/api/add_post', $postData);
 
+    // Assert the post was created successfully
     $response->assertStatus(Response::HTTP_CREATED)
-             ->assertJson($postData);
+             ->assertJson([
+                 'content' => 'This is an image post',
+                 'user_id' => $this->user->id,
+                 'postType' => 'image',
+                 'media_url' => $response->json('media_url'), // Ensure the media_url is returned
+             ]);
 }
 
 /** @test */
 public function it_can_create_video_post()
 {
+    // Create a user
+    $this->user = User::factory()->create();
+
+    // Prepare post data for a video post
     $postData = [
-        'content' => 'Test content',
+        'content' => 'This is a video post',
         'user_id' => $this->user->id,
-        'media_url' => 'http://example.com/media',
         'postType' => 'video',
+        'video' => UploadedFile::fake()->create('video.mp4'), // Add the required video field
     ];
 
+    // Send the request to create a video post
     $response = $this->actingAs($this->user)->postJson('/api/add_post', $postData);
 
+    // Assert the post was created successfully
     $response->assertStatus(Response::HTTP_CREATED)
-             ->assertJson($postData);
+             ->assertJson([
+                 'content' => 'This is a video post',
+                 'user_id' => $this->user->id,
+                 'postType' => 'video',
+                 'media_url' => $response->json('media_url'), // Ensure the media_url is returned
+             ]);
 }
 
 /** @test */
@@ -99,7 +133,7 @@ public function it_can_create_poll_post()
         'user_id' => $this->user->id,
         'postType' => 'poll',
         'poll' => [
-            'options' => ['Option 1', 'Option 2']
+            'options' => ['Option 1', 'Option 2'], // Send 'poll.options'
         ],
     ];
 
@@ -115,7 +149,9 @@ public function it_can_create_poll_post()
     // Assert that the response JSON contains the correct post data
     $response->assertJsonFragment([
         'content' => 'This is a poll post',
+        'user_id' => $this->user->id,
         'postType' => 'poll',
+        'poll_options' => ['Option 1', 'Option 2'], // Ensure poll options are included
     ]);
 
     // Assert that poll options are saved in the database

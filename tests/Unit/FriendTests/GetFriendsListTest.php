@@ -1,6 +1,7 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\FriendTests;
+
 
 
 use Tests\TestCase;
@@ -43,15 +44,21 @@ class GetFriendsListTest extends TestCase
             ]);
     }
 
-    public function test_failure_due_to_exception()
+    public function test_failure_due_to_unauthenticated_request()
     {
+        // Simulate an unauthenticated request (no user logged in)
+        Auth::logout(); // Log out the user
+    
         // Attempt to retrieve the friends list
         $response = $this->getJson('/api/user/get_friends_list');
-
-        $response->assertStatus(500)
+    
+        // Assert the response
+        $response->assertStatus(401)
                  ->assertJson([
+                     'message' => 'Unauthenticated.',
+                 ])
+                 ->assertJsonMissing([
                      'success' => false,
-                     'message' => "No query results for model [App\Models\User]."
                  ]);
     }
 

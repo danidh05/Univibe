@@ -1,6 +1,7 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\FriendTests;
+
 
 use App\Models\User;
 use App\Models\FriendRequest;

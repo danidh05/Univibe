@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class EmailVerficationController extends Controller
 {
 
-    public function verfiy(Request $request, $id, $hash)
+    public function verify(Request $request, $id, $hash)
 
     {
         $user = User::findOrFail($id);

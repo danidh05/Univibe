@@ -32,8 +32,9 @@ class GroupMembersControllerTest extends TestCase
 
     public function test_add_member_validation_error()
     {
-        $response = $this->postJson('/api/group/members/add', []);
-
+        $user = User::factory()->create(); // Create a dummy user
+        $response = $this->actingAs($user)->postJson('/api/group/members/add', []);
+    
         $response->assertStatus(422)
                  ->assertJsonValidationErrors(['group_chat_id']);
     }
@@ -130,8 +131,9 @@ class GroupMembersControllerTest extends TestCase
 
     public function test_remove_member_validation_error()
     {
-        $response = $this->postJson('/api/group/members/remove', []);
-
+        $user = User::factory()->create(); // Create a dummy user
+        $response = $this->actingAs($user)->postJson('/api/group/members/remove', []);
+    
         $response->assertStatus(422)
                  ->assertJsonValidationErrors(['group_chat_id']);
     }

@@ -1,6 +1,7 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\FriendTests;
+
 
 use Tests\TestCase;
 use App\Models\User;
@@ -39,16 +40,13 @@ class GetAllSentFriendRequestsTest extends TestCase
 
     public function test_authentication_failure()
     {
-        // Simulate no authenticated user
-        Auth::shouldReceive('id')->andReturn(null);
-
-        // Attempt to retrieve all sent friend requests
+        // Simulate no authenticated user by making the request without authentication
         $response = $this->getJson('/api/user/get_all_sent_friend_requests');
-
-        $response->assertStatus(500)
+    
+        // Assert that the response is 401 Unauthorized
+        $response->assertStatus(401)
                  ->assertJson([
-                     'success' => false,
-                     'message' => "No query results for model [App\Models\User]."
+                     'message' => 'Unauthenticated.',
                  ]);
     }
 

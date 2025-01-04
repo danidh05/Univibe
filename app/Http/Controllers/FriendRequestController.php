@@ -10,6 +10,8 @@ use App\Models\User;
 use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class FriendRequestController extends Controller
 {
@@ -430,30 +432,48 @@ class FriendRequestController extends Controller
      *     )
      * )
      */
-    public function get_friends_list(){
+    public function get_friends_list()
+    {
         try {
+            // Check if the user is authenticated
+            if (!Auth::check()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthenticated.',
+                ], 401);
+            }
+    
+            // Retrieve the authenticated user
             $user = User::findOrFail(Auth::id());
+    
             // Get the IDs of the friends from the Follows table
             $friendIds = Follows::where('follower_id', $user->id)
                 ->where('is_friend', true)
                 ->pluck('followed_id');
-
+    
             // Retrieve friend details from the User table
             $friends_list = User::whereIn('id', $friendIds)
                 ->select('id', 'username', 'email', 'profile_picture', 'is_active')
                 ->get();
-
+    
             return response()->json([
                 'success' => true,
                 'message' => 'Friend list successfully retrieved.',
                 'friends_list' => $friends_list
             ], 200);
-
-        } catch (\Throwable $th) {
-            // Return a generic error response
+    
+        } catch (ModelNotFoundException $e) {
+            // Handle the case where the user is not found
             return response()->json([
                 'success' => false,
-                'message' => $th->getMessage(),
+                'message' => 'User not found.',
+            ], 404);
+    
+        } catch (\Throwable $th) {
+            // Handle all other exceptions
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while retrieving the friend list.',
             ], 500);
         }
     }
@@ -502,7 +522,14 @@ class FriendRequestController extends Controller
      */
     public function get_all_received_friend_requests(){
         try {
-            $user = User::findOrFail(Auth::id());
+             // Check if the user is authenticated
+             if (!Auth::check()) {
+                 return response()->json([
+                'message' => 'Unauthenticated',
+                'success' => false,
+            ], 401);
+        }
+         $user = Auth::user();
             $received_friend_requests = $user->receivedFriendRequests;
 
             return response()->json([
@@ -538,28 +565,62 @@ class FriendRequestController extends Controller
      *     )
      * )
      */
-    public function is_friend($user_id){
+    public function is_friend($user_id)
+    {
         try {
+            // Check if the user is authenticated
+            if (!Auth::check()) {
+                return $this->handleUnauthenticated();
+            }
+    
+            // Retrieve the authenticated user
             $user = User::findOrFail(Auth::id());
+    
+            // Check if the target user exists
+            $targetUser = User::findOrFail($user_id);
+    
+            // Check if the users are friends
             $is_friends = $user->isFriend($user_id);
-
+    
             return response()->json([
                 'success' => true,
                 'message' => $is_friends ? 'You are friends with this user.' : 'You are not friends with this user.',
                 'is_friend' => $is_friends,
             ], 200);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            // Handle the specific case where the user is not found
-            return response()->json([
-                'success' => false,
-                'message' => 'User not found.',
-            ], 404);
+    
+        } catch (ModelNotFoundException $e) {
+            return $this->handleModelNotFound();
         } catch (\Throwable $th) {
-            // Return a generic error response
-            return response()->json([
-                'success' => false,
-                'message' => $th->getMessage(),
-            ], 500);
-        }
+            // Log the exception for debugging
+            Log::error('Error in is_friend function: ' . $th->getMessage());
+    
+            return $this->handleGenericError($th);
     }
+}
+    
+    // Helper methods for handling exceptions
+    private function handleUnauthenticated()
+    {
+        return response()->json([
+            'success' => false,
+            'message' => 'Unauthenticated.',
+        ], 401);
+    }
+    
+    private function handleModelNotFound()
+    {
+        return response()->json([
+            'success' => false,
+            'message' => 'User not found.',
+        ], 404);
+    }
+    
+    private function handleGenericError(\Throwable $th)
+    {
+        return response()->json([
+            'success' => false,
+            'message' => 'An error occurred while checking friendship status.',
+        ], 500);
+    }
+       
 }

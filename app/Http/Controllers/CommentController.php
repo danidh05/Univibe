@@ -63,7 +63,7 @@ class CommentController extends Controller
      *     )
      * )
      */
-    public function show_post_commnent($postId)
+    public function show_post_comment($postId)
     {
         $comments = Comment::with('post')
             ->with('user')

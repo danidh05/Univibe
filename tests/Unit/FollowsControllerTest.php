@@ -343,7 +343,7 @@ class FollowsControllerTest extends TestCase
         $user = User::factory()->create(); // This is the authenticated user
         $follower1 = User::factory()->create();
         $follower2 = User::factory()->create();
-
+    
         // Create follow relationships
         Follows::create([
             'follower_id' => $follower1->id,
@@ -355,60 +355,63 @@ class FollowsControllerTest extends TestCase
             'followed_id' => $user->id,
             'is_friend' => false,
         ]);
-
+    
         // Act as the user
         $this->actingAs($user);
-
+    
         // Perform the request to retrieve the followers list
         $response = $this->getJson('/api/user/get_follower_list');
-
+    
         // Assert the response status and JSON structure
         $response->assertStatus(200)
-                ->assertJson([
-                    'success' => true,
-                    'message' => 'Followers list retreived succesfully.',
-                ])
-                ->assertJsonStructure([
-                    'followers_list' => [
-                        '*' => ['id', 'username', 'email', 'profile_picture', 'is_active'] // Adjust this based on the actual structure of User
-                    ],
-                ]);
+                 ->assertJson([
+                     'success' => true,
+                     'message' => 'Followers list retrieved successfully.', // Updated message
+                 ])
+                 ->assertJsonStructure([
+                     'followers_list' => [
+                         '*' => ['id', 'username', 'email', 'profile_picture', 'is_active'] // Adjust this based on the actual structure of User
+                     ],
+                 ]);
     }
 
     public function test_get_follower_list_returns_empty_list_when_no_followers()
     {
         // Create a user with no followers
         $user = User::factory()->create();
-
+    
         // Act as the user
         $this->actingAs($user);
-
+    
         // Perform the request to retrieve the followers list
         $response = $this->getJson('/api/user/get_follower_list');
-
+    
         // Assert the response is successful with an empty follower list
         $response->assertStatus(200)
-                ->assertJson([
-                    'success' => true,
-                    'message' => 'Followers list retreived succesfully.',
-                    'followers_list' => [],
-                ]);
+                 ->assertJson([
+                     'success' => true,
+                     'message' => 'Followers list retrieved successfully.', // Updated message
+                     'followers_list' => [],
+                 ]);
     }
 
     public function test_get_follower_list_returns_error_if_retrieval_fails()
     {
-        // Simulate an error by not authenticating the user
-        // The Auth::id() call will fail since there's no authenticated user
-
-        // Perform the request without an authenticated user
-        $response = $this->getJson('/api/user/get_follower_list');
-
-        // Assert that the response status is 500 (or adjust if needed)
-        $response->assertStatus(500)
-                ->assertJson([
-                    'success' => false,
-                    'message' => 'No query results for model [App\\Models\\User].', // Adjust based on actual error message
-                ]);
+        // Create a dummy user to authenticate the request
+        $user = User::factory()->create();
+    
+        // Simulate a failure condition by deleting the user
+        $user->delete();
+    
+        // Perform the request with the authenticated user (which no longer exists)
+        $response = $this->actingAs($user)->getJson('/api/user/get_follower_list');
+    
+        // Assert that the response status is 404 (Not Found)
+        $response->assertStatus(404)
+                 ->assertJson([
+                     'success' => false,
+                     'message' => 'User not found.', // Updated message
+                 ]);
     }
 
     ///////////
@@ -419,7 +422,7 @@ class FollowsControllerTest extends TestCase
         $user = User::factory()->create(); // This is the authenticated user
         $follower1 = User::factory()->create();
         $follower2 = User::factory()->create();
-
+    
         // Create follow relationships
         Follows::create([
             'follower_id' => $user->id,
@@ -431,59 +434,62 @@ class FollowsControllerTest extends TestCase
             'followed_id' => $follower2->id,
             'is_friend' => false,
         ]);
-
+    
         // Act as the user
         $this->actingAs($user);
-
+    
         // Perform the request to retrieve the followers list
         $response = $this->getJson('/api/user/get_following_list');
-
+    
         // Assert the response status and JSON structure
         $response->assertStatus(200)
-                ->assertJson([
-                    'success' => true,
-                    'message' => 'Following list retreived succesfully.',
-                ])
-                ->assertJsonStructure([
-                    'following_list' => [
-                        '*' => ['id', 'username', 'email', 'profile_picture', 'is_active'] // Adjust this based on the actual structure of User
-                    ],
-                ]);
+                 ->assertJson([
+                     'success' => true,
+                     'message' => 'Following list retrieved successfully.', // Updated message
+                 ])
+                 ->assertJsonStructure([
+                     'following_list' => [
+                         '*' => ['id', 'username', 'email', 'profile_picture', 'is_active'] // Adjust this based on the actual structure of User
+                     ],
+                 ]);
     }
 
     public function test_get_following_list_returns_empty_list_when_no_followings()
     {
         // Create a user with no followers
         $user = User::factory()->create();
-
+    
         // Act as the user
         $this->actingAs($user);
-
+    
         // Perform the request to retrieve the followers list
         $response = $this->getJson('/api/user/get_following_list');
-
+    
         // Assert the response is successful with an empty follower list
         $response->assertStatus(200)
-                ->assertJson([
-                    'success' => true,
-                    'message' => 'Following list retreived succesfully.',
-                    'following_list' => [],
-                ]);
+                 ->assertJson([
+                     'success' => true,
+                     'message' => 'Following list retrieved successfully.', // Updated message
+                     'following_list' => [],
+                 ]);
     }
 
     public function test_get_following_list_returns_error_if_retrieval_fails()
     {
-        // Simulate an error by not authenticating the user
-        // The Auth::id() call will fail since there's no authenticated user
-
-        // Perform the request without an authenticated user
-        $response = $this->getJson('/api/user/get_following_list');
-
-        // Assert that the response status is 500 (or adjust if needed)
-        $response->assertStatus(500)
-                ->assertJson([
-                    'success' => false,
-                    'message' => 'No query results for model [App\\Models\\User].', // Adjust based on actual error message
-                ]);
+        // Create a dummy user to authenticate the request
+        $user = User::factory()->create();
+    
+        // Simulate a failure condition by deleting the user
+        $user->delete();
+    
+        // Perform the request with the authenticated user (which no longer exists)
+        $response = $this->actingAs($user)->getJson('/api/user/get_following_list');
+    
+        // Assert that the response status is 404 (Not Found)
+        $response->assertStatus(404)
+                 ->assertJson([
+                     'success' => false,
+                     'message' => 'User not found.', // Updated message
+                 ]);
     }
 }

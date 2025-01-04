@@ -204,31 +204,26 @@ public function add_post(PostRequest $request)
 {
     // Validation rules based on the postType
     $request->validate([
-        'title' => 'required|string',
         'content' => 'required|string',
         'postType' => 'required|in:text,image,video,poll',
-        'poll_options' => 'required_if:postType,poll|array',  // Poll options required only if postType is 'poll'
-        'poll_options.*' => 'string',  // Each poll option must be a string
-        'image' => 'required_if:postType,image|file|mimes:jpg,png,jpeg|max:2048',  // Image validation for 'image' type
-        'video' => 'required_if:postType,video|file|mimes:mp4,mov,avi|max:10240'  // Video validation for 'video' type
+        'poll.options' => 'required_if:postType,poll|array',  // Update to 'poll.options'
+        'poll.options.*' => 'string',  // Update to 'poll.options.*'
+        'image' => 'required_if:postType,image|file|mimes:jpg,png,jpeg|max:2048',
+        'video' => 'required_if:postType,video|file|mimes:mp4,mov,avi|max:10240',
     ]);
 
     try {
         // Prepare post data from validated input
         $postData = $request->validated();
-        $postData['user_id'] = $request->user_id;  // Attach the authenticated user
+        $postData['user_id'] = $request->user()->id;  // Attach the authenticated user
 
         // Handle file uploads for image or video depending on the postType
         if ($request->postType === 'image' && $request->hasFile('image')) {
-            $postData['image'] = $request->file('image')->store('images');  // Save image in 'images' directory
+            $postData['media_url'] = $request->file('image')->store('images');  // Save image in 'images' directory
+        } elseif ($request->postType === 'video' && $request->hasFile('video')) {
+            $postData['media_url'] = $request->file('video')->store('videos');  // Save video in 'videos' directory
         } else {
-            $postData['image'] = null;  // Set to null if not an image postType
-        }
-
-        if ($request->postType === 'video' && $request->hasFile('video')) {
-            $postData['video'] = $request->file('video')->store('videos');  // Save video in 'videos' directory
-        } else {
-            $postData['video'] = null;  // Set to null if not a video postType
+            $postData['media_url'] = null;  // Set to null if not an image or video postType
         }
 
         // Create the post in the database
@@ -236,18 +231,42 @@ public function add_post(PostRequest $request)
 
         // If postType is 'poll', handle the poll options
         if ($request->postType === 'poll') {
-            foreach ($request->poll_options as $option) {
+            // Debugging: Check if poll.options is present
+            \Log::info('Poll options:', $request->input('poll.options'));
+
+            foreach ($request->input('poll.options') as $option) {
+                // Debugging: Check each option
+                \Log::info('Saving poll option:', ['option' => $option]);
+
                 PollOption::create([
-                    'post_id' => $post->id,
-                    'option' => $option
+                    'post_id' => $post->id, // Ensure this is set correctly
+                    'option' => $option,
+                    'votes' => 0, // Initialize votes to 0
                 ]);
             }
         }
 
-        return response()->json($post, Response::HTTP_CREATED);
+        // Prepare the response data
+        $responseData = [
+            'id' => $post->id,
+            'content' => $post->content,
+            'user_id' => $post->user_id,
+            'postType' => $post->postType,
+            'media_url' => $post->media_url,
+        ];
+
+        // Include poll options in the response if the postType is 'poll'
+        if ($post->postType === 'poll') {
+            $responseData['poll_options'] = $request->input('poll.options');
+        }
+
+        return response()->json($responseData, Response::HTTP_CREATED);
 
     } catch (\Exception $e) {
-        // Handle exceptions (log them if necessary)
+        // Log the exception for debugging
+        \Log::error('Error creating post: ' . $e->getMessage());
+
+        // Return a 500 error response
         return response()->json(['error' => 'Failed to create post: ' . $e->getMessage()], 500);
     }
 }

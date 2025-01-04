@@ -85,37 +85,43 @@ class SearchController extends Controller
         try {
             // Get the search term from the request
             $searchTerm = $request->input('query');
-
+    
             // Check if a search term was provided
             if (!$searchTerm) {
                 return response()->json(['error' => 'No Data Found'], 400);
             }
-
-            // Search for users by username or bio
-            $users = User::where(function ($query) use ($searchTerm) {
-                $query->where('username', 'like', '%' . $searchTerm . '%')
-                      ->orWhere('bio', 'like', '%' . $searchTerm . '%');
-            })->get();
-
-            // Search for majors based only on the major name
+    
+            // Search for users by username, bio, major name, or university name
+            $users = User::where('username', 'like', '%' . $searchTerm . '%')
+                         ->orWhere('bio', 'like', '%' . $searchTerm . '%')
+                         ->orWhereHas('major', function ($query) use ($searchTerm) {
+                             $query->where('major_name', 'like', '%' . $searchTerm . '%');
+                         })
+                         ->orWhereHas('university', function ($query) use ($searchTerm) {
+                             $query->where('university_name', 'like', '%' . $searchTerm . '%');
+                         })
+                         ->with('major', 'university') // Eager-load the major and university relationships
+                         ->get();
+    
+            // Search for majors based on major name
             $majors = Major::where('major_name', 'like', '%' . $searchTerm . '%')->get();
-
+    
             // Search for universities based on university name or location
             $universities = University::where('university_name', 'like', '%' . $searchTerm . '%')
-                ->orWhere('location', 'like', '%' . $searchTerm . '%')
-                ->get();
-
+                                      ->orWhere('location', 'like', '%' . $searchTerm . '%')
+                                      ->get();
+    
             // Combine the search results into a unified response, only showing relevant data
             return response()->json([
                 'users' => $users->count() > 0 ? $users : [],
                 'majors' => $majors->count() > 0 ? $majors : [],
                 'universities' => $universities->count() > 0 ? $universities : []
             ]);
-
+    
         } catch (\Exception $e) {
             // Log the error for debugging purposes
             // Log::error('Search query failed: ' . $e->getMessage());
-
+    
             // Return a JSON response with a generic error message
             return response()->json(['error' => $e->getMessage()], 500);
         }

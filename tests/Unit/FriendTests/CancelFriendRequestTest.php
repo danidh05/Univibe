@@ -1,6 +1,7 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\FriendTests;
+
 
 use Tests\TestCase;
 use App\Models\User;

@@ -10,15 +10,14 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
- */
 class UserFactory extends Factory
 {
     /**
-     * The current password being used by the factory.
+     * The name of the factory's corresponding model.
+     *
+     * @var string
      */
-    protected static ?string $password;
+    protected $model = User::class;
 
     /**
      * Define the model's default state.
@@ -27,21 +26,25 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        // Fetch or create a default role (e.g., 'user')
+        $role = Role::where('role_name', 'user')->first() ?? Role::factory()->create(['role_name' => 'user']);
 
-        $role = Role::first() ?? Role::factory()->create();
+        // Fetch or create a default major
         $major = Major::first() ?? Major::factory()->create();
+
+        // Fetch or create a default university
         $university = University::first() ?? University::factory()->create();
 
         return [
             'username' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
+            'password' => Hash::make('password'), // Default password
             'remember_token' => Str::random(10),
-            'role_id' => $role->id,
+            'role_id' => $role->id, // Default to 'user' role
             'bio' => 'bio',
             'is_verified' => 1,
-            'major_id' => $major->id, // Adding majors_id
+            'major_id' => $major->id, // Adding major_id
             'university_id' => $university->id, // Adding university_id
         ];
     }
@@ -56,7 +59,22 @@ class UserFactory extends Factory
         ]);
     }
 
-        /**
+    /**
+     * State for creating an admin user.
+     */
+    public function admin(): static
+    {
+        return $this->state(function (array $attributes) {
+            // Fetch or create the admin role
+            $adminRole = Role::where('role_name', 'admin')->first() ?? Role::factory()->create(['role_name' => 'admin']);
+
+            return [
+                'role_id' => $adminRole->id, // Set role_id to admin
+            ];
+        });
+    }
+
+    /**
      * Configure the factory to add the pusher_channel after creation.
      */
     public function configure(): static

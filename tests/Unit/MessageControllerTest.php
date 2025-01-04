@@ -54,6 +54,8 @@ class MessageControllerTest extends TestCase
 
     public function test_send_private_message_validation_error()
     {
+        $user = User::factory()->create();
+        $this->actingAs($user);
         // Send request without receiver_id and content
         $response = $this->postJson('/api/messages/send', []);
 
@@ -346,6 +348,9 @@ class MessageControllerTest extends TestCase
 
     public function test_update_private_message_validation_error()
     {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+        
         $response = $this->putJson('/api/messages/update', []);
 
         $response->assertStatus(422)

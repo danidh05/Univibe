@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Unit\GroupMessagesTests;
 
 use App\Models\GroupMessage;
 use App\Models\User;

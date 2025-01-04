@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Unit\GroupMessagesTests;
 
 use App\Models\GroupChat;
 use App\Models\User;

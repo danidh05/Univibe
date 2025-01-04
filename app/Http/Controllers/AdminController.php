@@ -88,17 +88,28 @@ class AdminController extends Controller
      */
     public function createAboutUsDetail(Request $request, $aboutUsId)
     {
+        // Validate the request data
         $request->validate([
             'description' => 'required|string|max:500',
         ]);
-
+    
+        // Find the Aboutus record by ID
+        $aboutUs = Aboutus::findOrFail($aboutUsId);
+    
+        // Create the AboutusDetails record with the correct about_us_id
         $aboutUsDetail = AboutusDetails::create([
             'description' => $request->input('description'),
-            'about_us_id' => $aboutUsId
+            'about_us_id' => $aboutUs->id, // Use the ID of the Aboutus model
         ]);
+    
+        // Return the response with the created AboutusDetails
         return response()->json([
             'message' => 'About Us detail added successfully!',
-            'data' => $aboutUsDetail
+            'data' => [
+                'id' => $aboutUsDetail->id,
+                'description' => $aboutUsDetail->description,
+                'about_us_id' => $aboutUsDetail->about_us_id,
+            ],
         ], 201);
     }
 
@@ -143,9 +154,10 @@ class AdminController extends Controller
     public function getsingleAboutUsWithDetails(Request $request, $aboutUsId)
     {
         $aboutUs = Aboutus::with('details')->findOrFail($aboutUsId);
-        $aboutUsWithDetails = $aboutUs->details;
+        
         return response()->json([
-            'data' => $aboutUsWithDetails
+            'message' => 'About Us entry retrieved successfully!',
+            'data' => $aboutUs
         ], 200);
     }
 
@@ -223,7 +235,10 @@ class AdminController extends Controller
             'description' => 'required|string|max:500',
         ]);
 
+        $aboutUs = AboutUs::findOrFail($aboutUsId);
+
         $aboutUsDetail = AboutusDetails::where('about_us_id', $aboutUsId)->firstOrFail();
+        
         $aboutUsDetail->description = $request->input('description');
         $aboutUsDetail->save();
 

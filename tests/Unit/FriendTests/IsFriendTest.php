@@ -1,6 +1,7 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\FriendTests;
+
 
 
 use Tests\TestCase;
@@ -67,21 +68,35 @@ class IsFriendTest extends TestCase
 
     public function test_error_occurred()
     {
-        // Mock the Auth facade to return a specific user ID
-        Auth::shouldReceive('id')->andReturn(1);
-
-        // Mock the User model
+        // Disable middleware for this test (if necessary)
+        $this->withoutMiddleware();
+    
+        // Create a user and authenticate them
+        $user = \App\Models\User::factory()->create();
+        $this->actingAs($user);
+    
+        // Mock the User model to throw a ModelNotFoundException for the target user
         $userMock = Mockery::mock('App\Models\User');
-        $userMock->shouldReceive('find')
-            ->with(1)
-            ->andThrow(new ModelNotFoundException);
-
+        $userMock->shouldReceive('findOrFail')
+            ->with($user->id) // The authenticated user ID
+            ->andReturn($user); // Return the authenticated user
+    
+        $userMock->shouldReceive('findOrFail')
+            ->with(999999) // The non-existent target user ID
+            ->andThrow(new ModelNotFoundException); // Throw ModelNotFoundException
+    
+        // Mock the isFriend method to return false (since the target user does not exist)
+        $userMock->shouldReceive('isFriend')
+            ->with(999999) // The non-existent target user ID
+            ->andReturn(false); // Return false
+    
         // Bind the mock User to the app container
         $this->app->instance('App\Models\User', $userMock);
-
-        // Attempt to check friendship status
-        $response = $this->getJson('/api/user/is_friend/2');
-
+    
+        // Attempt to check friendship status for a non-existent user
+        $response = $this->getJson('/api/user/is_friend/999999'); // Non-existent user ID
+    
+        // Assert the response
         $response->assertStatus(404)
                  ->assertJson([
                      'success' => false,
